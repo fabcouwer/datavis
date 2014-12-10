@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dota Visualization</title>
+    <meta charset="utf-8">
+    <link href=bootstrap-3.1.1-dist/css/bootstrap.css rel=stylesheet media="screen">
+ 
+</head>
+<style>
+    #editor
+    {
+        font: 10px sans-serif;
+    }
+
+    #code
+    {
+        font: 10px sans-serif;
+    }
+
+    .axis text {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+    }
+
+    .outer {
+        fill: none;
+        stroke: #cc2316;
+    }
+
+
+
+    .arc path {
+        stroke: #fff;
+    }
+
+
+</style>
+
+
+<div class="row">
+    <div class="col-lg-6" id ="svgArea"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg2"></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6" id ="svg3"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg4"></div>
+</div>
+
+
+
+<!--<div id='editor'></div>-->
+
+
+<body>
+
+<script src=D3/d3.min.js></script>
+<script src=jquery-2.1.0/jquery-2.1.0.min.js></script>
+<script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
+
+
+
+<script>
+    var x2;
+    // Creates your margin and size of your canvas
+    var margin = {top: 25, right: 25, bottom: 25, left: 25};
+    width = 700 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+
+    // Check the API of d3 if you want to have a deeper understanding on how scales work.
+    // This variables are global, so if you are interested go to console and type:
+    // x.range()
+    // y.range()
+    // See that there is no domain defined.....yet!
+    var x = d3.scale.linear().range([0, width]);
+    var y = d3.scale.linear().range([height, 0]);
+
+    var xAxisScale = d3.scale.linear()
+                                .domain([0, 100])
+                                .range([0,width]);
+
+    var yAxisScale = d3.scale.linear()
+                                .domain([0, 200])
+                                .range([height, 0]);
+
+    d3.select("#svgArea").style("background-color", "aliceblue");
+
+    var xAxis = d3.svg.axis()
+            .orient("bottom")
+            .scale(xAxisScale);
+    var yAxis = d3.svg.axis()
+            .orient("left")
+            .scale(yAxisScale);
+
+
+    // In order for the margins to work we need to append a "g" (graphic) element to our svg
+    var svg = d3.select("#svgArea").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var globalvariable;
+
+    // Remember the modules in the presentation? This is where the fun begins
+    // 1. Create a global variable and check in console how the data variable returns the information from "data-2.csv"
+    var nest;
+    var dataPie;
+
+    d3.csv("master-distance-small.csv", function(error, data) {
+        data.forEach(function(d)
+        {
+            d.match = +d.match;
+            d.team = d.team;
+            d.tsync = +d.tsync;
+            d.DD = +d.DD;
+            d.Tier = d.Tier;
+            d.WinLose = d.WinLose;
+        });
+        console.log()
+
+        
+
+        svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + (height) + ")")
+                .call(xAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("x", width-80)
+                .attr("y", -6)
+                .text("Tsync");
+
+        svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("x", 10)
+                .attr("y", 10)
+                .text("DD");
+        console.log("Done");
+    });
+</script>
+</body>
+</html>
