@@ -1,0 +1,5 @@
+match,tier,team,topLane,bottomLane,midLane,jungle,winLose
+123456,Pro,dire,2,1,2,0,win
+123456,Pro,radiant,1,2,1,1,lose
+234567,Pro,dire,2,1,2,0,lose
+234567,Pro,radiant,1,2,1,1,win
