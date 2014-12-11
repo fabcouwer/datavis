@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dota Visualization</title>
+    <meta charset="utf-8">
+    <link href=bootstrap-3.1.1-dist/css/bootstrap.css rel=stylesheet media="screen">
+
+</head>
+<style>
+#editor
+{
+    font: 10px sans-serif;
+}
+
+#code
+{
+    font: 10px sans-serif;
+}
+
+.axis text {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+}
+
+.outer {
+    fill: none;
+    stroke: #cc2316;
+}
+
+
+
+.arc path {
+    stroke: #fff;
+}
+
+
+</style>
+
+
+<div class="row">
+    <div class="col-lg-6" id ="svgArea"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg2"></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6" id ="svg3"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg4"></div>
+</div>
+
+
+
+<!--<div id='editor'></div>-->
+
+
+<body>
+
+    <script src=D3/d3.min.js></script>
+    <script src=jquery-2.1.0/jquery-2.1.0.min.js></script>
+    <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
+
+
+    <script>
+    // Create the margin and size of the canvas
+    var margin = {top: 25, right: 25, bottom: 25, left: 50};
+    width = 700 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+
+    // In order for the margins to work we need to append a "g" (graphic) element to our svg
+    var svg = d3.select("#svgArea").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scale.ordinal()
+        .rangeRoundBands([0, width], .4);
+
+    // Axes
+    var y = d3.scale.linear()
+        .rangeRound([height, 0]);
+
+    var color = d3.scale.ordinal()
+        .range(["#2ca02c", "#d62728"]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .tickFormat(d3.format(".0%"));
+
+    var stack = d3.layout.stack()
+        .offset('expand')
+        .values(function(d) { return d.values; });
+
+    //Load data
+    d3.csv("stackedbar.csv", function(error, data) {
+        color.domain(d3.keys(data[0]).filter(function(key) { return key !== "Opponent"; }));
+
+        data.forEach(function(d) {
+            var y0 = 0;
+            d.stats = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+            d.stats.forEach(function(d) { d.y0 /= y0; d.y1 /= y0; });
+        });
+
+        x.domain(data.map(function(d) { return d.Opponent; }));
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width-55)
+        .attr("y", +15)
+        .text("Opponent");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", 10)
+        .attr("y", 10)
+        .text("Winrate");
+
+
+    var opponent = svg.selectAll(".Opponent")
+        .data(data)
+        .enter().append("g")
+        .attr("class", "state")
+        .attr("transform", function(d) { return "translate(" + x(d.Opponent) + ",0)"; });
+
+    opponent.selectAll("rect")
+        .data(function(d) { return d.stats; })
+        .enter().append("rect")
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(d.y1); })
+        .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+        .style("fill", function(d) { return color(d.name); });
+
+
+    });
+
+
+    </script>
+</body>
+</html>
