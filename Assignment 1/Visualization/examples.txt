@@ -1,3 +1,0 @@
-Tabbed visualizations: http://bl.ocks.org/widged/4561185
-Bar chart tutorial: http://bost.ocks.org/mike/bar/
-Bar chart subcategories: http://stackoverflow.com/questions/16710014/d3-bar-chart-with-sub-categories
