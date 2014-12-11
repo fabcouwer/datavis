@@ -72,31 +72,6 @@
     width = 700 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
-    var x = d3.scale.ordinal().range([0, width]);
-    var y = d3.scale.linear().range([height, 0]);
-
-    //X and Y axis
-    var tiers = ["Noob", "Pro", "MLG HardScoper"]
-
-    var xAxisScale = d3.scale.ordinal()
-        .domain(tiers)
-        .rangeRoundBands([0,width], .1);
-
-    var yAxisScale = d3.scale.linear()
-        .domain([0, 100])
-        .range([height,0]);
-
-    d3.select("#svgArea").style("background-color", "aliceblue");
-
-
-    // Initialize axes (TODO edit this to fit intended visualization)
-    var xAxis = d3.svg.axis()
-        .orient("bottom")
-        .scale(xAxisScale)
-    var yAxis = d3.svg.axis()
-        .orient("left")
-        .scale(yAxisScale);
-
 
     // In order for the margins to work we need to append a "g" (graphic) element to our svg
     var svg = d3.select("#svgArea").append("svg")
@@ -105,13 +80,55 @@
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (height) + ")")
-        .call(xAxis)
+    //X and Y axis
+    var tiers = ["Normal", "High", "Very High", "Pro"];
+
+    var x = d3.scale.ordinal()
+        .domain(tiers)
+        .rangeRoundBands([0, width], 0.2);
+    var y = d3.scale.linear()
+        .domain([0, 100])
+        .rangeRound([height,0]);
+    d3.select("#svgArea").style("background-color", "aliceblue");
+
+    var groupColor = d3.scale.category10()
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom');
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left');
+ 
+    // Temp data
+    var dataA = [45, 45, 45, 45];
+    var dataB = [50, 40, 45, 55];
+    var dataC = [30, 40, 50, 60];
+
+    var dataAll = [dataA, dataB, dataC];
+    var dataT = d3.transpose(dataAll);
+    var groups = dataAll.length;
+
+    var tier = svg.selectAll('g')
+        .data(dataT)
+        .enter()
+        .append('g');
+
+    tier.selectAll('rect')
+        .data(function (d) {return d;}) //here we are binding the tier list to children 
+        .enter()
+        .append('rect')
+        .attr('x', function (d, i, mainIndex) { return x(tiers[mainIndex]) + i * x.rangeBand() / groups; })
+        .attr('y', function (d) {return y(d) })
+        .attr('width', function () {return x.rangeBand() / groups; })
+        .attr('height', function (d) {return height - y(d);})
+        .attr('fill', function (d, i) {return groupColor(i);})
+
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + (height) + ')').call(xAxis)
         .append("text")
         .attr("class", "label")
-        .attr("x", width-80)
+        .attr("x", width-20)
         .attr("y", -6)
         .text("Tier");
 
@@ -123,11 +140,12 @@
         .attr("x", 10)
         .attr("y", 10)
         .text("Winrate");
-        console.log("Done");
 
+    console.log("Done");    
 
 
     // Load the (dummy) data
+    /*
     d3.csv("example_comp_data.csv", function(error, data) {
         data.forEach(function(d)
         {
@@ -135,13 +153,15 @@
             d.tier = d.tier;
             d.team = d.team;
             d.topLane = +d.topLane;
-            d.bottomLane = +d.bottomLane;
             d.midLane = +d.midLane;
+            d.bottomLane = +d.bottomLane;
             d.jungle = +d.jungle;
             d.winLose = d.winLose;
 
         });
         console.log()
+        });
+    */
 
     //TODO Extract different lineups from data
 
@@ -155,8 +175,6 @@
         //Calc/Vis other stats for lineups?
         //Calculate stats for matchups
         //Visualize stats for matchups
-});
-
     </script>
 </body>
 </html>
