@@ -3,6 +3,7 @@
 \usepackage{a4wide}
 \usepackage{float}
 \usepackage{enumerate}
+\usepackage{hyperref}
 
 \title{IN4086 Data Visualization \\
 Visual Game Analytics Assignment \\ }
@@ -24,10 +25,37 @@ For this assignment, we were asked to use the provided datasets and the D3 visua
 In this report, we will first describe our analysis of the dataset and the different options for visualization we considered. Then, we will demonstrate the results of our work.
 
 \section{The Data}
-Hi 
+The data we received can be divided into two distinct parts: a team distance dataset and a player trajectory dataset.
+The team distance dataset is pretty straightforward: it tracks the average distance between the players within each team.
+Since the potential visualizations using this dataset that we could think of were rather similar to the work shown in the paper provided with the assignment~\cite{drachenskill}, we decided to focus our attention on the player trajectory dataset.\\
+
+Since the replay files from most DotA 2 matches are available online on sites like \url{dotabuff.com} and \url{dotabank.com}, it might be possible to extract data from these replays to use along with the provided data. However, this is difficult for a number of reasons:
+\begin{enumerate}
+\item Steam users often change their display names, and there might even be more than one player with a certain name in a game, making it unreliable to use player name as a link between this dataset and another one.
+\item Since the timestamps in the dataset do not correspond directly to game time (as they include warmup time before the 0:00 mark), it could be difficult to sync this dataset to other datasets based on time.
+\item Replay files to extract new data from are not always available for every match.
+\end{enumerate}
+To avoid encountering these issues, we decided to look for useful information we could extract using only the provided dataset.
+
+As Drachen and Schubert explain in their 2013 article, there are several aspects of player information that can be logged~\cite{drachen2013spatial}. These include the four dimensions of physical attributes, involved event or action, spatial position and time, as well as a fifth 'social' dimension indicating 'to whom' a player performed an action.
+The player trajectory dataset contains data in the Space and Time dimensions, meaning there is no information from the Avatar, Event or Social domains~\footnote{One could argue that the player name might belong in the Avatar domain, but we believe that this does not hold in this case, since the player name is used only as an identifier and has no significant relation to the player's avatar.}. There are several possible ways to use the spatio-temporal data to find information that might be useful to players. We considered various possibilities, including the following:
+
+\begin{itemize}
+\item \textbf{Total team distance traveled:} It might be interesting to compare the total distance traveled in a game across teams (Dire vs. Radiant) and skill levels, or the distance traveled within certain zones of the map.
+\item \textbf{Player deaths:} When a player dies, their position will be the same for a large number of ticks while they are dead. This could be used to, for example, chart how dangerous each part of the map is. However, in this dataset deaths might be difficult to separate from instances where a player stands still before teleporting back to their base.
+\item \textbf{Team fights:} In DotA 2, team fights have a large impact on the progress of a match. If we can detect instances where several players from both teams are in the same zone, we can use this to for example learn when during a typical game team fights are most likely to occur.
+\item \textbf{Opening strategies:} The division of team members across the map in the early game is an important tactical decision that influences the rest of the game. Using this dataset, we can visualize what the most common opening strategies are and how they perform against other compositions for each of the player tiers.
+\end{itemize}
+In the end, we chose to investigate extracting information about opening strategies from the dataset for this project, as we considered it to be the most promising out of the four options.
 
 \section{Visualization}
-Hello
+- What did we make and how does it work
+- What conclusions can we draw from the data
+- What future work could be interesting
+
+
+\bibliographystyle{abbrv}
+\bibliography{datavis}  
 
 \end{document}
 
