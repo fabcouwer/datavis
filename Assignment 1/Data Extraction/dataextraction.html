@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dota Visualization</title>
+    <meta charset="utf-8">
+    <link href=bootstrap-3.1.1-dist/css/bootstrap.css rel=stylesheet media="screen">
+ 
+</head>
+<style>
+    #editor
+    {
+        font: 10px sans-serif;
+    }
+
+    #code
+    {
+        font: 10px sans-serif;
+    }
+
+    .axis text {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+    }
+
+    .outer {
+        fill: none;
+        stroke: #cc2316;
+    }
+
+
+
+    .arc path {
+        stroke: #fff;
+    }
+
+
+</style>
+
+
+<div class="row">
+    <div class="col-lg-6" id ="svgArea"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg2"></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6" id ="svg3"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg4"></div>
+</div>
+
+
+
+<!--<div id='editor'></div>-->
+
+
+<body>
+
+<script src=D3/d3.min.js></script>
+<script src=jquery-2.1.1.js></script>
+<script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
+<script src=jquery.csv-0.71.js></script>
+
+<script>
+    var dataFileName = "master-zones-1-match.csv";
+
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: dataFileName,
+            dataType: "text",
+            success: function(data) {processData(data);}
+         });
+    });
+
+    function processData(allText) {
+        var parsedInput = $.csv.toArrays(allText);
+        var output = createArray(10, 10);
+        output[0][0] = "matchid";
+        console.log(output[0][0]);
+
+        // Set values for the initial row
+        var currentMatch = parsedInput[1][3];
+        var currentPlayer = parsedInput[1][5];
+        var midlaneTimes = 0;
+        var jungleTimes = 0;
+        var toplaneTimes = 0;
+        var bottomlaneTimes = 0;
+        var voidTimes = 0;
+        var riverTimes = 0;
+        var laneshopTimes = 0;
+        var secretshopTimes = 0;
+        var baseTimes = 0;
+        var pitTimes = 0;
+        var otherTimes = 0;
+        // For each row in parsedInput, beginning from the second row
+        for (i = 2; i < parsedInput.length; i++) {
+            // Check whether the match is still the same id
+            if(currentMatch == parsedInput[i][3]) {
+                if(currentPlayer == parsedInput[i][5]) {
+                    var loc = parsedInput[i][11];
+                    if(loc == '"midlane radiant"' || loc == '"midlane dire"') {
+                        midlaneTimes++;
+                    }
+                    else if(loc == '"jungle radiant"' || loc == '"jungle dire"') {
+                        jungleTimes++;
+                    }
+                    else if(loc == '"toplane radiant"' || loc == '"toplane dire"') {
+                        toplaneTimes++;
+                    }
+                    else if(loc == '"bottomlane radiant"' || loc == '"bottomlane dire"') {
+                        bottomlaneTimes++;
+                    }
+                    else if(loc == '"void radiant"' || loc == '"void dire"') {
+                        voidTimes++;
+                    }
+                    else if(loc == '"river"') {
+                        riverTimes++;
+                    }
+                    else if(loc == '"base1 radiant"' || loc == '"base2 dire"') {
+                        baseTimes++;
+                    }
+                    else if(loc == '"laneshop radiant"' || loc == '"laneshop dire"') {
+                        laneshopTimes++;
+                    }
+                    else if(loc == '"secretshop radiant"' || loc == '"secretshop dire"') {
+                        secretshop++;
+                    }
+                    else if(loc == '"pit dire"') {
+                        pitTimes++;
+                    }
+                    else {
+                        console.log(loc);
+                        otherTimes++;
+                    }
+                }
+                else {
+                    console.log("switch player");
+                    console.log("Midlane " + midlaneTimes);
+                    console.log("Jungle " + jungleTimes);
+                    console.log("Toplane " + toplaneTimes);
+                    console.log("Bottomlane " + bottomlaneTimes);
+                    console.log("Other " + otherTimes);
+                    var total = midlaneTimes + jungleTimes + toplaneTimes + bottomlaneTimes + otherTimes;
+                    console.log("Total " + total);
+                    currentPlayer = parsedInput[i][5];
+                    midlaneTimes = 0;
+                    jungleTimes = 0;
+                    toplaneTimes = 0;
+                    bottomlaneTimes = 0;
+                    otherTimes = 0;
+                }
+            }
+        }
+        console.log("Done");
+    }
+
+    function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+</script>
+</body>
+</html>
