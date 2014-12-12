@@ -99,10 +99,6 @@
         .orient("left")
         .tickFormat(d3.format(".0%"));
 
-    var stack = d3.layout.stack()
-        .offset('expand')
-        .values(function(d) { return d.values; });
-
     //Load data
     d3.csv("stackedbar.csv", function(error, data) {
         color.domain(d3.keys(data[0]).filter(function(key) { return key !== "Opponent"; }));
