@@ -1,5 +1,4 @@
-package datavis;
-
+package datavis; 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -95,7 +94,18 @@ public class OpeningStrategy {
 	// Returns a CSV-ready String with overall stats.
 	// Example: "2t1m1b,3,3,0.5"
 	public String toStringOverall() {
-		return (this.name + "," + this.totalWins + "," + this.totalLosses + "," + this.overallWinrate);
+		String overall = this.name + "," + this.totalWins + ","
+				+ this.totalLosses + "," + this.overallWinrate;
+		for (Map.Entry<String, Double> entry : winrates.entrySet()) {
+			String tier = entry.getKey();
+			// Include data from the tiers
+			if (tier.equals("Pro") || tier.equals("VeryHigh")
+					|| tier.equals("High") || tier.equals("Normal")) {
+				overall += "\n" + this.name + "," + tier + "," + wins.get(tier)
+						+ "," + losses.get(tier) + "," + entry.getValue();
+			}
+		}
+		return overall;
 	}
 
 	// Returns a CSV-ready String with individual statistics.
@@ -104,9 +114,13 @@ public class OpeningStrategy {
 		String s = "";
 		for (Map.Entry<String, Double> entry : winrates.entrySet()) {
 			String opponent = entry.getKey();
-			s += this.name + "," + entry.getKey() + "," + wins.get(opponent)
-					+ "," + losses.get(opponent) + "," + entry.getValue()
-					+ "\n";
+			// Do not include data from tiers
+			if (!(opponent.equals("Pro") || opponent.equals("VeryHigh")
+					|| opponent.equals("High") || opponent.equals("Normal"))) {
+				s += this.name + "," + opponent + "," + wins.get(opponent)
+						+ "," + losses.get(opponent) + "," + entry.getValue()
+						+ "\n";
+			}
 		}
 		return s;
 	}
