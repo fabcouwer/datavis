@@ -1,0 +1,3 @@
+function nameToFull(nameString){
+	//todo
+}

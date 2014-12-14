@@ -2,3 +2,4 @@ Tabbed visualizations: http://bl.ocks.org/widged/4561185
 Bar chart tutorial: http://bost.ocks.org/mike/bar/
 Bar chart subcategories: http://stackoverflow.com/questions/16710014/d3-bar-chart-with-sub-categories
 Normalized stacked bar chart: http://bl.ocks.org/mbostock/3886394
+Pie chart with tooltips: http://stackoverflow.com/questions/22824846/adding-tooltips-to-pie-chart-using-d3-js

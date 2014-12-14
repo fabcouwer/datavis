@@ -115,7 +115,7 @@ public class WinRateExtractor {
 		try {
 			FileWriter writer = new FileWriter(outputFile1);
 			
-			writer.append("Strategy,Wins,Losses,Winrate\n");
+			writer.append("Strategy,Tier,Wins,Losses,Winrate\n");
 			
 			for (OpeningStrategy os : strats.values()) {
 				writer.append(os.toStringOverall());

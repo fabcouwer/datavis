@@ -94,7 +94,7 @@ public class OpeningStrategy {
 	// Returns a CSV-ready String with overall stats.
 	// Example: "2t1m1b,3,3,0.5"
 	public String toStringOverall() {
-		String overall = this.name + "," + this.totalWins + ","
+		String overall = this.name + ",Overall," + this.totalWins + ","
 				+ this.totalLosses + "," + this.overallWinrate;
 		for (Map.Entry<String, Double> entry : winrates.entrySet()) {
 			String tier = entry.getKey();
