@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dota Visualization</title>
+    <meta charset="utf-8">
+    <link href=bootstrap-3.1.1-dist/css/bootstrap.css rel=stylesheet media="screen">
+
+</head>
+<style>
+#editor
+{
+    font: 10px sans-serif;
+}
+
+#code
+{
+    font: 10px sans-serif;
+}
+
+.axis text {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+}
+
+.outer {
+    fill: none;
+    stroke: #cc2316;
+}
+
+
+
+.arc path {
+    stroke: #fff;
+}
+
+
+</style>
+<div class="row">
+    <div class="col-lg-6" id ="header1">
+    </div>
+    <div class="col-lg-6" id ="header2">
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+            Dropdown
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" id="menu" role="menu" aria-labelledby="dropdownMenu1">
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+          </ul>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-lg-6" id ="svg1"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg2"></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6" id ="svg3"></div>
+    <!--<div class="col-md-4" id ="editor"></div>-->
+    <div class="col-lg-6" id ="svg4"></div>
+</div>
+
+
+
+<!--<div id='editor'></div>-->
+
+
+<body>
+
+    <script src=D3/d3.min.js></script>
+    <script src=jquery-2.1.1.js></script>
+    <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
+    <script src=jquery.csv-0.71.js></script>
+
+    <script>
+
+    var dataFileName = "ResultGeneral.csv";
+    // Read the data file
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: dataFileName,
+            dataType: "text",
+            success: function(data) {processData(data);}
+         });
+    });
+
+    // Process data from resultgeneral into dropdown
+    function processData(allText) {
+        var parsedInput = $.csv.toArrays(allText);
+        fillDropDown(parsedInput);
+    }
+
+    function fillDropDown(parsedInput) {
+        var menu = '';
+        for(var i=1; i<parsedInput.length; i++) {
+            menu += '<li role="presentation">';
+            menu += '<a role="menuitem" tabindex="-1" href="#">';
+            menu += parsedInput[i][0];
+            menu += '</a></li>';
+        }
+        menu += '</li>';
+        menu += '</ul>';
+        $('#menu').html(menu);
+    }
+
+    // Create the margin and size of the canvas
+    var margin = {top: 25, right: 25, bottom: 25, left: 25};
+    width = 700 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+
+    // In order for the margins to work we need to append a "g" (graphic) element to our svg
+    var svg = d3.select("#svg1").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //X and Y axis
+    var tiers = ["Normal", "High", "Very High", "Pro"];
+
+    var x = d3.scale.ordinal()
+        .domain(tiers)
+        .rangeRoundBands([0, width], 0.2);
+    var y = d3.scale.linear()
+        .domain([0, 100])
+        .rangeRound([height,0]);
+    d3.select("#svgArea").style("background-color", "aliceblue");
+
+    var groupColor = d3.scale.category10()
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom');
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left');
+ 
+    // Temp data
+    var dataA = [45, 45, 45, 45];
+    var dataB = [50, 40, 45, 55];
+    var dataC = [30, 40, 50, 60];
+
+    var dataAll = [dataA, dataB, dataC];
+    var dataT = d3.transpose(dataAll);
+    var groups = dataAll.length;
+
+    var tier = svg.selectAll('g')
+        .data(dataT)
+        .enter()
+        .append('g');
+
+    tier.selectAll('rect')
+        .data(function (d) {return d;}) //here we are binding the tier list to children 
+        .enter()
+        .append('rect')
+        .attr('x', function (d, i, mainIndex) { return x(tiers[mainIndex]) + i * x.rangeBand() / groups; })
+        .attr('y', function (d) {return y(d) })
+        .attr('width', function () {return x.rangeBand() / groups; })
+        .attr('height', function (d) {return height - y(d);})
+        .attr('fill', function (d, i) {return groupColor(i);})
+
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + (height) + ')').call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width-20)
+        .attr("y", -6)
+        .text("Tier");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", 10)
+        .attr("y", 10)
+        .text("Winrate");
+
+    console.log("Done");    
+
+
+    // Load the (dummy) data
+    /*
+    d3.csv("example_comp_data.csv", function(error, data) {
+        data.forEach(function(d)
+        {
+            d.match = +d.match;
+            d.tier = d.tier;
+            d.team = d.team;
+            d.topLane = +d.topLane;
+            d.midLane = +d.midLane;
+            d.bottomLane = +d.bottomLane;
+            d.jungle = +d.jungle;
+            d.winLose = d.winLose;
+
+        });
+        console.log()
+        });
+    */
+
+    //TODO Extract different lineups from data
+
+    //TODO Calculate win %'s for different lineups
+
+    //TODO Visualize win %'s in a bar chart
+
+
+
+    //TODO Other visualizations:
+        //Calc/Vis other stats for lineups?
+        //Calculate stats for matchups
+        //Visualize stats for matchups
+    </script>
+</body>
+</html>
