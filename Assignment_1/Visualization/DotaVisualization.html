@@ -41,19 +41,15 @@
 
 </style>
 <div class="row">
-    <div class="col-lg-6" id ="header1">
+    <div class="col-lg-6" id ="headerLeft">
     </div>
-    <div class="col-lg-6" id ="header2">
+    <div class="col-lg-6" id ="headerRight">
         <div class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-            Dropdown
+            Select from here
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" id="menu" role="menu" aria-labelledby="dropdownMenu1">
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
           </ul>
         </div>
     </div>
@@ -104,11 +100,17 @@
         fillDropDown(parsedInput);
     }
 
+    function clickMenuItem() {
+        console.log("Menu item clicked!");
+        //$('#dropdownMenu1').
+    }
+
     function fillDropDown(parsedInput) {
         var menu = '';
         for(var i=1; i<parsedInput.length; i++) {
             menu += '<li role="presentation">';
-            menu += '<a role="menuitem" tabindex="-1" href="#">';
+            // onclick="clickMenuItem();"
+            menu += '<a role="menuitem" tabindex="-1">';
             menu += parsedInput[i][0];
             menu += '</a></li>';
         }
@@ -116,6 +118,16 @@
         menu += '</ul>';
         $('#menu').html(menu);
     }
+
+    $(function(){
+        $(".dropdown-menu").on('click', 'li a', function(){
+            console.log("menu clicked");
+          $("#dropdownMenu1").val($(this).text());
+          $("#dropdownMenu1").html($(this).text() + ' <span class="caret"></span>');
+
+          // Do other stuff that is neccesary to change the d3 view below
+        });
+    });
 
     // Create the margin and size of the canvas
     var margin = {top: 25, right: 25, bottom: 25, left: 25};
