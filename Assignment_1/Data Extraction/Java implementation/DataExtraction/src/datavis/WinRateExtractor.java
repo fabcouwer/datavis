@@ -105,7 +105,7 @@ public class WinRateExtractor {
 	// Returns a String of the format "NtNbNmNj"
 	public static String extractStrategy(String[] line) {
 		String strategy = "";
-		strategy += line[2] + "t" + line[3] + "b" + line[4] + "m" + line[5]
+		strategy += line[2] + "e" + line[3] + "h" + line[4] + "m" + line[5]
 				+ "j";
 		return strategy;
 	}
