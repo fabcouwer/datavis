@@ -1,4 +1,3 @@
-package datavis;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,7 +10,9 @@ import java.util.HashMap;
 // - A file for every strategy's performance against other strategies
 public class WinRateExtractor {
 
-	public static String fileName = "C:\\Users\\F\\Downloads\\5minuteOpeningStrat.csv";
+	public static String inputFile = "D:\\Friso\\Downloads\\5minuteOpeningStrat.csv";
+	public static String outputFile1 = "D:\\Friso\\Downloads\\ResultGeneral.csv";
+	public static String outputFile2 = "D:\\Friso\\Downloads\\ResultMatchups.csv";
 	public static HashMap<String, OpeningStrategy> strats;
 
 	public static void main(String[] args) {
@@ -23,7 +24,7 @@ public class WinRateExtractor {
 		String csvSplitBy = ",";
 		try {
 
-			br = new BufferedReader(new FileReader(fileName));
+			br = new BufferedReader(new FileReader(inputFile));
 			br.readLine();
 			// Extract 2 lines at a time for processing
 			while ((line = br.readLine()) != null) {
@@ -51,6 +52,7 @@ public class WinRateExtractor {
 		}
 
 		// Output opening strategies to file
+		writeResultsToCSV();
 
 	}
 
@@ -105,6 +107,38 @@ public class WinRateExtractor {
 		strategy += line[2] + "t" + line[3] + "b" + line[4] + "m" + line[5]
 				+ "j";
 		return strategy;
+	}
+
+	public static void writeResultsToCSV() {
+		//Output general results
+		try {
+			FileWriter writer = new FileWriter(outputFile1);
+			
+			writer.append("Strategy,Wins,Losses,Winrate\n");
+			
+			for (OpeningStrategy os : strats.values()) {
+				writer.append(os.toStringOverall());
+				writer.append("\n");
+			}
+			writer.flush();
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//Output matchup information
+		try {
+			FileWriter writer = new FileWriter(outputFile2);
+			
+			writer.append("Strategy,Opponent,Wins,Losses,Winrate\n");
+			
+			for (OpeningStrategy os : strats.values()) {
+				writer.append(os.toStringIndividual());
+			}
+			writer.flush();
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
