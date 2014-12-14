@@ -13,13 +13,17 @@ public class Runnable {
 	public static String dataTestFileName = "master-zones-1-match.csv";
 	public static String fullDataFileName = "master-zones-geupdate.csv";
 
-	public static int maxTime = 300;
+	public static int fiveMinuteTime = 300;
+	public static int tenMinuteTime = 600;
+	public static int fifteenMinuteTime = 900;
 
 	public static String exportFileName = "5minuteOpeningStrat.csv";
 
 	public static void main(String[] args) {
 		Runnable run = new Runnable();
-		run.readFile(fullDataFileName);
+		run.readFile(fullDataFileName, fiveMinuteTime);
+		run.readFile(fullDataFileName, tenMinuteTime);
+		run.readFile(fullDataFileName, fifteenMinuteTime);
 
 	}
 
@@ -63,8 +67,8 @@ public class Runnable {
 		String[][] rtn = new String[matchCount * 2 + 1][8];
 		rtn[0][0] = "matchid";
 		rtn[0][1] = "team";
-		rtn[0][2] = "toplane";
-		rtn[0][3] = "bottomlane";
+		rtn[0][2] = "easylane";
+		rtn[0][3] = "hardlane";
 		rtn[0][4] = "midlane";
 		rtn[0][5] = "jungle";
 		rtn[0][6] = "winner";
@@ -94,7 +98,7 @@ public class Runnable {
 		return input;
 	}
 
-	public void readFile(String fileName) {
+	public void readFile(String fileName, int maxTime) {
 		// int matchCount = matchCountFile(fileName);
 		int matchCount = 194;
 		// Declare output arrays
@@ -109,8 +113,8 @@ public class Runnable {
 		String currentMatchWinner;
 		int midlaneTimes = 0;
 		int jungleTimes = 0;
-		int toplaneTimes = 0;
-		int bottomlaneTimes = 0;
+		int easylaneTimes = 0;
+		int hardlaneTimes = 0;
 		int voidTimes = 0;
 		int riverTimes = 0;
 		int laneshopTimes = 0;
@@ -148,9 +152,6 @@ public class Runnable {
 					currentTier);
 			int i = 0;
 			while ((line = br.readLine()) != null) {
-				if (currentMatch.equals("626684019")) {
-					System.out.println("matcH!");
-				}
 				// use comma as separator
 				line = line.replaceAll("[^a-zA-Z,12345678910]", "");
 				String[] splitLine = line.split(cvsSplitBy);
@@ -158,25 +159,25 @@ public class Runnable {
 				if (currentMatch.equals(splitLine[3])) {
 					if (!currentPlayer.equals(splitLine[5])) {
 						int totalTime = midlaneTimes + jungleTimes
-								+ toplaneTimes + bottomlaneTimes + voidTimes
+								+ easylaneTimes + hardlaneTimes + voidTimes
 								+ riverTimes + laneshopTimes + secretshopTimes
 								+ baseTimes + pitTimes + otherTimes;
 						if (currentTeam.equals("radiant")) {
 							if (midlaneTimes >= jungleTimes
-									&& midlaneTimes >= toplaneTimes
-									&& midlaneTimes >= bottomlaneTimes) {
+									&& midlaneTimes >= easylaneTimes
+									&& midlaneTimes >= hardlaneTimes) {
 								outputLastReadMatch[0][4] = Integer
 										.parseInt(outputLastReadMatch[0][4])
 										+ 1 + "";
 							} else if (jungleTimes >= midlaneTimes
-									&& jungleTimes >= toplaneTimes
-									&& jungleTimes >= bottomlaneTimes) {
+									&& jungleTimes >= easylaneTimes
+									&& jungleTimes >= hardlaneTimes) {
 								outputLastReadMatch[0][5] = Integer
 										.parseInt(outputLastReadMatch[0][5])
 										+ 1 + "";
-							} else if (bottomlaneTimes >= toplaneTimes
-									&& bottomlaneTimes >= midlaneTimes
-									&& bottomlaneTimes >= jungleTimes) {
+							} else if (hardlaneTimes >= easylaneTimes
+									&& hardlaneTimes >= midlaneTimes
+									&& hardlaneTimes >= jungleTimes) {
 								outputLastReadMatch[0][3] = Integer
 										.parseInt(outputLastReadMatch[0][3])
 										+ 1 + "";
@@ -187,20 +188,20 @@ public class Runnable {
 							}
 						} else {
 							if (midlaneTimes >= jungleTimes
-									&& midlaneTimes >= toplaneTimes
-									&& midlaneTimes >= bottomlaneTimes) {
+									&& midlaneTimes >= easylaneTimes
+									&& midlaneTimes >= hardlaneTimes) {
 								outputLastReadMatch[1][4] = Integer
 										.parseInt(outputLastReadMatch[1][4])
 										+ 1 + "";
 							} else if (jungleTimes >= midlaneTimes
-									&& jungleTimes >= toplaneTimes
-									&& jungleTimes >= bottomlaneTimes) {
+									&& jungleTimes >= easylaneTimes
+									&& jungleTimes >= hardlaneTimes) {
 								outputLastReadMatch[1][5] = Integer
 										.parseInt(outputLastReadMatch[1][5])
 										+ 1 + "";
-							} else if (bottomlaneTimes >= toplaneTimes
-									&& bottomlaneTimes >= midlaneTimes
-									&& bottomlaneTimes >= jungleTimes) {
+							} else if (hardlaneTimes >= easylaneTimes
+									&& hardlaneTimes >= midlaneTimes
+									&& hardlaneTimes >= jungleTimes) {
 								outputLastReadMatch[1][3] = Integer
 										.parseInt(outputLastReadMatch[1][3])
 										+ 1 + "";
@@ -214,8 +215,8 @@ public class Runnable {
 						currentTeam = splitLine[4];
 						midlaneTimes = 0;
 						jungleTimes = 0;
-						toplaneTimes = 0;
-						bottomlaneTimes = 0;
+						easylaneTimes = 0;
+						hardlaneTimes = 0;
 						voidTimes = 0;
 						riverTimes = 0;
 						laneshopTimes = 0;
@@ -225,28 +226,28 @@ public class Runnable {
 						otherTimes = 0;
 					}
 				} else {
-					int totalTime = midlaneTimes + jungleTimes + toplaneTimes
-							+ bottomlaneTimes + voidTimes + riverTimes
+					int totalTime = midlaneTimes + jungleTimes + easylaneTimes
+							+ hardlaneTimes + voidTimes + riverTimes
 							+ laneshopTimes + secretshopTimes + baseTimes
 							+ pitTimes + otherTimes;
 					if (currentTeam.equals("radiant")) {
 						if (midlaneTimes >= jungleTimes
-								&& midlaneTimes >= toplaneTimes
-								&& midlaneTimes >= bottomlaneTimes) {
+								&& midlaneTimes >= easylaneTimes
+								&& midlaneTimes >= hardlaneTimes) {
 							outputLastReadMatch[0][4] = Integer
 									.parseInt(outputLastReadMatch[0][4])
 									+ 1
 									+ "";
 						} else if (jungleTimes >= midlaneTimes
-								&& jungleTimes >= toplaneTimes
-								&& jungleTimes >= bottomlaneTimes) {
+								&& jungleTimes >= easylaneTimes
+								&& jungleTimes >= hardlaneTimes) {
 							outputLastReadMatch[0][5] = Integer
 									.parseInt(outputLastReadMatch[0][5])
 									+ 1
 									+ "";
-						} else if (bottomlaneTimes >= toplaneTimes
-								&& bottomlaneTimes >= midlaneTimes
-								&& bottomlaneTimes >= jungleTimes) {
+						} else if (hardlaneTimes >= easylaneTimes
+								&& hardlaneTimes >= midlaneTimes
+								&& hardlaneTimes >= jungleTimes) {
 							outputLastReadMatch[0][3] = Integer
 									.parseInt(outputLastReadMatch[0][3])
 									+ 1
@@ -259,22 +260,22 @@ public class Runnable {
 						}
 					} else {
 						if (midlaneTimes >= jungleTimes
-								&& midlaneTimes >= toplaneTimes
-								&& midlaneTimes >= bottomlaneTimes) {
+								&& midlaneTimes >= easylaneTimes
+								&& midlaneTimes >= hardlaneTimes) {
 							outputLastReadMatch[1][4] = Integer
 									.parseInt(outputLastReadMatch[1][4])
 									+ 1
 									+ "";
 						} else if (jungleTimes >= midlaneTimes
-								&& jungleTimes >= toplaneTimes
-								&& jungleTimes >= bottomlaneTimes) {
+								&& jungleTimes >= easylaneTimes
+								&& jungleTimes >= hardlaneTimes) {
 							outputLastReadMatch[1][5] = Integer
 									.parseInt(outputLastReadMatch[1][5])
 									+ 1
 									+ "";
-						} else if (bottomlaneTimes >= toplaneTimes
-								&& bottomlaneTimes >= midlaneTimes
-								&& bottomlaneTimes >= jungleTimes) {
+						} else if (hardlaneTimes >= easylaneTimes
+								&& hardlaneTimes >= midlaneTimes
+								&& hardlaneTimes >= jungleTimes) {
 							outputLastReadMatch[1][3] = Integer
 									.parseInt(outputLastReadMatch[1][3])
 									+ 1
@@ -290,8 +291,8 @@ public class Runnable {
 					currentTeam = splitLine[4];
 					midlaneTimes = 0;
 					jungleTimes = 0;
-					toplaneTimes = 0;
-					bottomlaneTimes = 0;
+					easylaneTimes = 0;
+					hardlaneTimes = 0;
 					voidTimes = 0;
 					riverTimes = 0;
 					laneshopTimes = 0;
@@ -350,11 +351,11 @@ public class Runnable {
 							|| loc.equals("jungledire")) {
 						jungleTimes++;
 					} else if (loc.equals("toplaneradiant")
-							|| loc.equals("toplanedire")) {
-						toplaneTimes++;
-					} else if (loc.equals("bottomlaneradiant")
 							|| loc.equals("bottomlanedire")) {
-						bottomlaneTimes++;
+						hardlaneTimes++;
+					} else if (loc.equals("bottomlaneradiant")
+							|| loc.equals("toplanedire")) {
+						easylaneTimes++;
 					} else if (loc.equals("voidradiant")
 							|| loc.equals("voiddire")) {
 						voidTimes++;
@@ -377,23 +378,23 @@ public class Runnable {
 				}
 			}
 			// calculate values for last match
-			int totalTime = midlaneTimes + jungleTimes + toplaneTimes
-					+ bottomlaneTimes + voidTimes + riverTimes + laneshopTimes
+			int totalTime = midlaneTimes + jungleTimes + easylaneTimes
+					+ hardlaneTimes + voidTimes + riverTimes + laneshopTimes
 					+ secretshopTimes + baseTimes + pitTimes + otherTimes;
 			if (currentTeam.equals("radiant")) {
-				if (midlaneTimes >= jungleTimes && midlaneTimes >= toplaneTimes
-						&& midlaneTimes >= bottomlaneTimes) {
+				if (midlaneTimes >= jungleTimes && midlaneTimes >= easylaneTimes
+						&& midlaneTimes >= hardlaneTimes) {
 					outputLastReadMatch[0][4] = Integer
 							.parseInt(outputLastReadMatch[0][4]) + 1 + "";
 				} else if (jungleTimes >= midlaneTimes
-						&& jungleTimes >= toplaneTimes
-						&& jungleTimes >= bottomlaneTimes) {
+						&& jungleTimes >= easylaneTimes
+						&& jungleTimes >= hardlaneTimes) {
 					outputLastReadMatch[0][5] = Integer
 							.parseInt(outputLastReadMatch[0][5]) + 1 + "";
-				} else if (bottomlaneTimes >= toplaneTimes
-						&& bottomlaneTimes >= midlaneTimes
-						&& bottomlaneTimes >= jungleTimes
-						&& bottomlaneTimes >= midlaneTimes) {
+				} else if (hardlaneTimes >= easylaneTimes
+						&& hardlaneTimes >= midlaneTimes
+						&& hardlaneTimes >= jungleTimes
+						&& hardlaneTimes >= midlaneTimes) {
 					outputLastReadMatch[0][3] = Integer
 							.parseInt(outputLastReadMatch[0][3]) + 1 + "";
 				} else {
@@ -401,19 +402,19 @@ public class Runnable {
 							.parseInt(outputLastReadMatch[0][2]) + 1 + "";
 				}
 			} else {
-				if (midlaneTimes >= jungleTimes && midlaneTimes >= toplaneTimes
-						&& midlaneTimes >= bottomlaneTimes) {
+				if (midlaneTimes >= jungleTimes && midlaneTimes >= easylaneTimes
+						&& midlaneTimes >= hardlaneTimes) {
 					outputLastReadMatch[1][4] = Integer
 							.parseInt(outputLastReadMatch[1][4]) + 1 + "";
 				} else if (jungleTimes >= midlaneTimes
-						&& jungleTimes >= toplaneTimes
-						&& jungleTimes >= bottomlaneTimes) {
+						&& jungleTimes >= easylaneTimes
+						&& jungleTimes >= hardlaneTimes) {
 					outputLastReadMatch[1][5] = Integer
 							.parseInt(outputLastReadMatch[1][5]) + 1 + "";
-				} else if (bottomlaneTimes >= toplaneTimes
-						&& bottomlaneTimes >= midlaneTimes
-						&& bottomlaneTimes >= jungleTimes
-						&& bottomlaneTimes >= midlaneTimes) {
+				} else if (hardlaneTimes >= easylaneTimes
+						&& hardlaneTimes >= midlaneTimes
+						&& hardlaneTimes >= jungleTimes
+						&& hardlaneTimes >= midlaneTimes) {
 					outputLastReadMatch[1][3] = Integer
 							.parseInt(outputLastReadMatch[1][3]) + 1 + "";
 				} else {
