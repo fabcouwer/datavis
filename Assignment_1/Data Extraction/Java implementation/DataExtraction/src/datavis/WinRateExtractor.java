@@ -1,3 +1,4 @@
+package datavis;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,9 +11,9 @@ import java.util.HashMap;
 // - A file for every strategy's performance against other strategies
 public class WinRateExtractor {
 
-	public static String inputFile = "D:\\Friso\\Downloads\\5minuteOpeningStrat.csv";
-	public static String outputFile1 = "D:\\Friso\\Downloads\\ResultGeneral.csv";
-	public static String outputFile2 = "D:\\Friso\\Downloads\\ResultMatchups.csv";
+	public static String inputFile = "5minuteOpeningStrat.csv";
+	public static String outputFile1 = "ResultGeneral.csv";
+	public static String outputFile2 = "ResultMatchups.csv";
 	public static HashMap<String, OpeningStrategy> strats;
 
 	public static void main(String[] args) {

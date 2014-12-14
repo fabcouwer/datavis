@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class OpeningStrategy {
@@ -101,7 +102,7 @@ public class OpeningStrategy {
 	// Example: "A,B,3,3,0.5\nA,C,4,1,0.8\n"
 	public String toStringIndividual() {
 		String s = "";
-		for (HashMap.Entry<String, Double> entry : winrates.entrySet()) {
+		for (Map.Entry<String, Double> entry : winrates.entrySet()) {
 			String opponent = entry.getKey();
 			s += this.name + "," + entry.getKey() + "," + wins.get(opponent)
 					+ "," + losses.get(opponent) + "," + entry.getValue()

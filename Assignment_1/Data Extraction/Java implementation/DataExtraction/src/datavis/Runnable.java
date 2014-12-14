@@ -11,11 +11,11 @@ import java.util.ArrayList;
 public class Runnable {
 
 	public static String dataTestFileName = "master-zones-1-match.csv";
-	public static String fullDataFileName = "master-zones.csv";
+	public static String fullDataFileName = "master-zones-geupdate.csv";
 
-	public static int maxTime = 900;
+	public static int maxTime = 300;
 
-	public static String exportFileName = "15minuteOpeningStrat.csv";
+	public static String exportFileName = "5minuteOpeningStrat.csv";
 
 	public static void main(String[] args) {
 		Runnable run = new Runnable();
@@ -96,7 +96,7 @@ public class Runnable {
 
 	public void readFile(String fileName) {
 		// int matchCount = matchCountFile(fileName);
-		int matchCount = 196;
+		int matchCount = 194;
 		// Declare output arrays
 		String[][] output = createOutput(matchCount);
 		String[][] outputLastReadMatch = new String[2][8];
@@ -124,7 +124,6 @@ public class Runnable {
 		String line = "";
 		String cvsSplitBy = ",";
 		try {
-
 			br = new BufferedReader(new FileReader(fileName));
 			String firstLine = br.readLine();
 			String line2 = br.readLine()
@@ -149,6 +148,9 @@ public class Runnable {
 					currentTier);
 			int i = 0;
 			while ((line = br.readLine()) != null) {
+				if (currentMatch.equals("626684019")) {
+					System.out.println("matcH!");
+				}
 				// use comma as separator
 				line = line.replaceAll("[^a-zA-Z,12345678910]", "");
 				String[] splitLine = line.split(cvsSplitBy);
