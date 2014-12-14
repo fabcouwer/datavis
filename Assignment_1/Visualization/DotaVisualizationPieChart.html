@@ -20,20 +20,27 @@ body {
   stroke: #000;
 }
 
+div.tooltip {
+    position: absolute;         
+    text-align: center;         
+    width: 60px;                    
+    height: 28px;                   
+    padding: 2px;               
+    font: 12px sans-serif;      
+    background: lightsteelblue; 
+    border: 0px;        
+    border-radius: 8px;         
+    pointer-events: none;
+
+}
+
 
 </style>
-<div id="tooltip" class="hidden">
-    <p><strong>Important Label Heading</strong>
-    </p>
-    <p><span id="value">100</span>%</p>
-</div>
 <body>
     
     <script src=D3/d3.min.js></script>
     <script src=jquery-2.1.1.js></script>
     <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
-
-
 
     <script>
     width = 960,
@@ -41,6 +48,10 @@ body {
     radius = Math.min(width, height) / 2;
 
     var totalMatches = 0;
+
+    var div = d3.select("body").append("div")   
+        .attr("class", "tooltip")               
+        .style("opacity", 0);
 
     // Load data: filter only overall stats
     d3.csv("ResultGeneral.csv", function(error, data) {
@@ -79,7 +90,21 @@ body {
             .enter()
             .append("g")
             .attr("class", "arc")
-            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+            .on("mouseover", function (d) {
+                div.transition()        
+                    .duration(200)      
+                    .style("opacity", .9);  
+                div.html("Test")
+                    .style("left", (d3.event.pageX) + "px")     
+                    .style("top", (d3.event.pageY - 28) + "px")
+                    .style("opacity", 1);
+            })
+            .on("mouseout", function () {
+                div.transition()        
+                    .duration(500)      
+                    .style("opacity", 0);
+            });
 
         // Draw arc paths
         arcs.append("path")
