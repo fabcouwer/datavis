@@ -62,7 +62,7 @@
 <body>
 
     <script src=D3/d3.min.js></script>
-    <script src=jquery-2.1.0/jquery-2.1.0.min.js></script>
+    <script src=jquery-2.1.1.js></script>
     <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
 
 
@@ -99,17 +99,58 @@
         .orient("left")
         .tickFormat(d3.format(".0%"));
 
-    //Load data
-    d3.csv("stackedbar.csv", function(error, data) {
-        color.domain(d3.keys(data[0]).filter(function(key) { return key !== "Opponent"; }));
+    var selectedStrategy = "1e1h1m2j";
 
+    var stackedBarData = [];
+
+    //Load data
+    d3.csv("ResultMatchups.csv", function(error, data) {
+        var name = "";
+        var numberOfDifferentStrategies = 0;
+        var differentStrategies = [];
         data.forEach(function(d) {
+            if(name != d.Strategy && d.Strategy != selectedStrategy) {
+                name = d.Strategy;
+                numberOfDifferentStrategies++;
+                differentStrategies[differentStrategies.length] = d.Strategy;
+            }
+        });
+        name = "";
+        var counter = 0;
+        stackedBarData[counter] = [];
+        stackedBarData[counter][0] = "Strategy";
+        stackedBarData[counter][1] = "Winrate";
+        stackedBarData[counter][2] = "Lossrate";
+        for(i = 0; i < numberOfDifferentStrategies; i++) {
+            stackedBarData[i+1] = [];
+            stackedBarData[i+1][0] = differentStrategies[i];
+            stackedBarData[i+1][1] = 1;
+            stackedBarData[i+1][2] = 0;
+        }
+        data.forEach(function(d) {
+            if(d.Strategy == selectedStrategy) {
+                for(i = 0; i < numberOfDifferentStrategies; i++) {
+                    if(d.Opponent == differentStrategies[i-1]) {
+                        var winrt = +d.Winrate;
+                        stackedBarData[i][1] = +d.Winrate;
+                        stackedBarData[i][2] = 1-winrt;
+                    }
+                }
+            }
+        });
+
+        color.domain(d3.keys(stackedBarData[0]).filter(function(key) { return key !== "Strategy"; }));
+
+
+        stackedBarData.forEach(function(d) {
             var y0 = 0;
             d.stats = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
             d.stats.forEach(function(d) { d.y0 /= y0; d.y1 /= y0; });
         });
 
-        x.domain(data.map(function(d) { return d.Opponent; }));
+        x.domain(stackedBarData.map(function(d) { return d.Strategy; }));
+
+        // console.log(data);
 
     svg.append("g")
         .attr("class", "x axis")
@@ -135,7 +176,7 @@
         .data(data)
         .enter().append("g")
         .attr("class", "state")
-        .attr("transform", function(d) { return "translate(" + x(d.Opponent) + ",0)"; });
+        .attr("transform", function(d) { return "translate(" + x(d.Strategy) + ",0)"; });
 
     opponent.selectAll("rect")
         .data(function(d) { return d.stats; })
