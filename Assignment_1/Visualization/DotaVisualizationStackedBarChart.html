@@ -61,7 +61,7 @@
 
 <body>
 
-    <script src=D3/d3.min.js></script>
+    <script src=D3/d3.js></script>
     <script src=jquery-2.1.1.js></script>
     <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
 
@@ -148,9 +148,10 @@
             d.stats.forEach(function(d) { d.y0 /= y0; d.y1 /= y0; });
         });
 
-        x.domain(stackedBarData.map(function(d) { return d.Strategy; }));
-
-        // console.log(data);
+        xdomaindata = stackedBarData.map(function(d) { if(d[0] != "Strategy") return d[0];})
+        //Remove entry from the first row of the input file
+        xdomaindata.splice(0,1);
+        x.domain(xdomaindata);
 
     svg.append("g")
         .attr("class", "x axis")
@@ -159,7 +160,7 @@
         .append("text")
         .attr("class", "label")
         .attr("x", width-55)
-        .attr("y", +15)
+        .attr("y", -10)
         .text("Opponent");
 
     svg.append("g")
@@ -171,12 +172,13 @@
         .attr("y", 10)
         .text("Winrate");
 
-
     var opponent = svg.selectAll(".Opponent")
         .data(data)
         .enter().append("g")
         .attr("class", "state")
         .attr("transform", function(d) { return "translate(" + x(d.Strategy) + ",0)"; });
+
+    console.log(opponent);
 
     opponent.selectAll("rect")
         .data(function(d) { return d.stats; })
