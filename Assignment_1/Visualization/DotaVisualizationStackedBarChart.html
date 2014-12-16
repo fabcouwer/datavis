@@ -119,8 +119,8 @@
         var counter = 0;
         stackedBarData[counter] = [];
         stackedBarData[counter][0] = "Strategy";
-        stackedBarData[counter][1] = "Winrate";
-        stackedBarData[counter][2] = "Lossrate";
+        stackedBarData[counter][1] = "Wins";
+        stackedBarData[counter][2] = "Losses";
         for(i = 0; i < numberOfDifferentStrategies; i++) {
             stackedBarData[i+1] = [];
             stackedBarData[i+1][0] = differentStrategies[i];
@@ -131,66 +131,73 @@
             if(d.Strategy == selectedStrategy) {
                 for(i = 0; i < numberOfDifferentStrategies; i++) {
                     if(d.Opponent == differentStrategies[i-1]) {
-                        var winrt = +d.Winrate;
-                        stackedBarData[i][1] = +d.Winrate;
-                        stackedBarData[i][2] = 1-winrt;
+                        stackedBarData[i][1] = +d.Wins;
+                        stackedBarData[i][2] = +d.Losses;
                     }
                 }
             }
         });
 
-        color.domain(d3.keys(stackedBarData[0]).filter(function(key) { return key !== "Strategy"; }));
 
+        //Remove entry from the first row of the input file
+        stackedBarData.splice(0,1);
 
-        stackedBarData.forEach(function(d) {
+        //Map stackedbardata to something usable by the plot
+        var chartData = [];
+        for(var i = 0; i < stackedBarData.length; i++){
+            var value = {Opponent: stackedBarData[i][0],
+                         Wins: stackedBarData[i][1],
+                         Losses: stackedBarData[i][2]};
+            chartData.push(value);
+        }
+
+        color.domain(d3.keys(chartData[0]).filter(function(key) { return key !== "Opponent"; }));
+
+        chartData.forEach(function(d) {
             var y0 = 0;
             d.stats = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
             d.stats.forEach(function(d) { d.y0 /= y0; d.y1 /= y0; });
         });
 
-        xdomaindata = stackedBarData.map(function(d) { if(d[0] != "Strategy") return d[0];})
-        //Remove entry from the first row of the input file
-        xdomaindata.splice(0,1);
-        x.domain(xdomaindata);
+        x.domain(chartData.map(function(d) { return d.Opponent; }));
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width-55)
+            .attr("y", -10)
+            .text("Opponent");
 
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", width-55)
-        .attr("y", -10)
-        .text("Opponent");
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", 10)
+            .attr("y", 10)
+            .text("Winrate");
 
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", 10)
-        .attr("y", 10)
-        .text("Winrate");
 
-    var opponent = svg.selectAll(".Opponent")
-        .data(data)
-        .enter().append("g")
-        .attr("class", "state")
-        .attr("transform", function(d) { return "translate(" + x(d.Strategy) + ",0)"; });
+        var opponent = svg.selectAll(".Opponent")
+            .data(chartData)
+            .enter().append("g")
+            .attr("class", "state")
+            .attr("transform", function(d) { return "translate(" + x(d.Opponent) + ",0)"; });
 
-    console.log(opponent);
+        console.log(opponent);
 
-    opponent.selectAll("rect")
-        .data(function(d) { return d.stats; })
-        .enter().append("rect")
-        .attr("width", x.rangeBand())
-        .attr("y", function(d) { return y(d.y1); })
-        .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-        .style("fill", function(d) { return color(d.name); });
+        opponent.selectAll("rect")
+            .data(function(d) { return d.stats; })
+            .enter().append("rect")
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.y1); })
+            .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+            .style("fill", function(d) { return color(d.name); });
 
 
     });
-
 
     </script>
 </body>
