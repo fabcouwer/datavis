@@ -23,8 +23,8 @@ body {
 div.tooltip {
     position: absolute;         
     text-align: center;         
-    width: 60px;                    
-    height: 28px;                   
+    width: 100px;                    
+    height: 120px;                   
     padding: 2px;               
     font: 12px sans-serif;      
     background: lightsteelblue; 
@@ -61,7 +61,7 @@ div.tooltip {
         var name, count;
         data.forEach(function(d) {
             d.count = +((+d.Wins) + (+d.Losses));
-            totalMatches += count;
+            totalMatches += +d.count;
         });
 
             // Make the pie chart
@@ -92,10 +92,14 @@ div.tooltip {
             .attr("class", "arc")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
             .on("mouseover", function (d) {
+                var percentage = Math.round(d.data.count/totalMatches * 10000) / 100;
+                var winrate = Math.round(d.data.Winrate * 10000) / 100;
+                var tooltip = d.data.Strategy + ".<br> Played in " + d.data.count + " of " + totalMatches + " matches (" + percentage 
+                    + "%).<br> Winrate: " + winrate + "%.";
                 div.transition()        
                     .duration(200)      
                     .style("opacity", .9);  
-                div.html("Test")
+                div.html(tooltip)
                     .style("left", (d3.event.pageX) + "px")     
                     .style("top", (d3.event.pageY - 28) + "px")
                     .style("opacity", 1);
