@@ -165,7 +165,7 @@ div.tooltip {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //X and Y axis
-    var tiers = ["Normal", "High", "Very High", "Pro"];
+    var tiers = ["Normal", "High", "Very High", "Pro", "Overall"];
 
     var x = d3.scale.ordinal()
         .domain(tiers)
@@ -177,6 +177,7 @@ div.tooltip {
 
     barChart();
     pieChart();
+    stackedBarChart();
 
     function pieChart() {
         radius = Math.min(width, height) / 2;
