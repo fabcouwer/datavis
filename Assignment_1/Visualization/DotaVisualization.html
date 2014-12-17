@@ -72,48 +72,135 @@ div.tooltip2 {
     pointer-events: none; 
 }
 
+
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+    padding-top: 50px;
+}
+
 }
 
 </style>
-<div class="container">
-    <div class="row">
-        <div class="col-lg-3" id="headerRight2">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand">Dota 2 Visualisation</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+                <div>
+                <p class="navbar-text">Datasets:</p>
+                </div>
+            </li>
+            <li>
+                <div class="btn-group navbar-btn">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
                 5minute
                 <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
+                </button>
+                <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
                     <li role = "presentation"><a role="menuitem" tabindex="-1">5minute</a></li>
                     <li role = "presentation"><a role="menuitem" tabindex="-1">10minute</a></li>
                     <li role = "presentation"><a role="menuitem" tabindex="-1">15minute</a></li>
-              </ul>
-            </div>
+                </ul>
+                </div>
+            </li>
+            <li><p class="navbar-text">Team strategy:</p></li>
+            <li>
+                <div class="btn-group navbar-btn">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                    Select from here
+                <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="menuStrategy" role="menu" aria-labelledby="dropdownMenu1">
+                </ul>
+                </div>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+<!-- <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <p class="navbar-brand">Dota 2 Visualisation</p>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <p class="navbar-brand">Dataset:</p>
+                </li>
+                <li>
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+                    5minute
+                    <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
+                        <li role = "presentation"><a role="menuitem" tabindex="-1">5minute</a></li>
+                        <li role = "presentation"><a role="menuitem" tabindex="-1">10minute</a></li>
+                        <li role = "presentation"><a role="menuitem" tabindex="-1">15minute</a></li>
+                    </ul>
+                    </li>
+                </li>
+                <li><p class="navbar-brand">Team strategy:</p></li>
+                <li><button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        Select from here
+                    <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="menuStrategy" role="menu" aria-labelledby="dropdownMenu1">
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav> -->
+
+<div class="container col-centered">
+    <div class="jumbotron">
+        <h1>Dota data visualisation</h1>
+        <h3>Our visualisation features three visualisations:</h3>
+        <p>The first is a bar chart with overall data. <a class="" href="#" role="button" id="LearnMore1">Learn more.</a></p>
+        <p>The second is a pie chart with overall data. <a class="" href="#" role="button" id="LearnMore2">Learn more.</a></p>
+        <p>The third is a stacked bar chart for specific data. <a class="" href="#" role="button" id="LearnMore3">Learn more.</a></p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3" id="headerRight2">
+            
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6" id ="svg1container"></div>
+        <div class="col-lg-8" id ="svg1container"></div>
+        <div class="col-lg-4">
+            <p>Explanation for the bar chart</p>
+        </div>
     </div>
     <div class="row">
-        <div class="col-lg-6" id ="svg3container"></div>
+        <div class="col-lg-8" id ="svg3container"></div>
+        <div class="col-lg-4">
+            <p>Explanation for the pie chart</p>
+        </div>
     </div>
     <div class="row">
-        <div class="col-lg-6" id ="headerLeft">
-            <div class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                 Select from here
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" id="menuStrategy" role="menu" aria-labelledby="dropdownMenu1">
-              </ul>
-            </div>
+        <div class="col-lg-8" id ="headerLeft">
         </div>
     </div>
 
     <div class="row">
-        <div class="col-lg-6" id ="svg2container"></div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6" id ="svg4"></div>
+        <div class="col-lg-8" id ="svg2container"></div>
+        <div class="col-lg-4">
+            <p>Explanation for the stacked bar chart</p>
+        </div>
     </div>
 </div>
 
@@ -133,14 +220,16 @@ div.tooltip2 {
 
     var dataFileName = "ResultGeneral.csv";
     // Read the data file
-    $(document).ready(function() {
-        $.ajax({
-            type: "GET",
-            url: "ResultGeneral" + selectedTime + ".csv",
-            dataType: "text",
-            success: function(data) {processData(data);}
-         });
-    });
+    function readData() {
+        $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "ResultGeneral" + selectedTime + ".csv",
+                dataType: "text",
+                success: function(data) {processData(data);}
+             });
+        });
+    }
 
     // Process data from resultgeneral into dropdown
     function processData(allText) {
@@ -167,6 +256,12 @@ div.tooltip2 {
         menu += '</li>';
         menu += '</ul>';
         $('#menuStrategy').html(menu);
+        if(!firstRead) {
+            firstRead = true;
+            barChart();
+            pieChart();
+            stackedBarChart();
+        }
     }
 
     $(function(){
@@ -193,11 +288,40 @@ div.tooltip2 {
             d3.select("#svg1").remove();
             d3.select("#svg2").remove();
             d3.select("#svg3").remove();
+            readData();
             stackedBarChart();
             barChart();
             pieChart();
         });
     });
+
+    $(function(){
+        $("#LearnMore1").click(function() {
+            $('html, body').animate({
+                scrollTop: $("#svg1container").offset().top
+            }, 500);
+        });
+    });
+
+    $(function(){
+        $("#LearnMore2").click(function() {
+            $('html, body').animate({
+                scrollTop: $("#svg3container").offset().top
+            }, 500);
+        });
+    });
+
+    $(function(){
+        $("#LearnMore3").click(function() {
+            $('html, body').animate({
+                scrollTop: $("#svg2container").offset().top
+            }, 500);
+        });
+    });
+
+
+    var firstRead = false;
+    readData();
 
     // Create the margin and size of the canvas
     var margin = {top: 25, right: 25, bottom: 25, left: 25};
@@ -217,10 +341,6 @@ div.tooltip2 {
     var selectedStrategy;
 
     var selectedTime = "5minute";
-
-    barChart();
-    pieChart();
-    //stackedBarChart();
 
     function pieChart() {
         radius = Math.min(width, height) / 2;
