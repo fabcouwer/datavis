@@ -94,6 +94,9 @@ div.tooltip2 {
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
+                <li role = "presentation"><a role="menuitem" tabindex="-1">5 minutes</a></li>
+                <li role = "presentation"><a role="menuitem" tabindex="-1">10 minutes</a></li>
+                <li role = "presentation"><a role="menuitem" tabindex="-1">15 minutes</a></li>
           </ul>
         </div>
     </div>
@@ -104,11 +107,11 @@ div.tooltip2 {
 <div class="row">
     <div class="col-lg-6" id ="svg1container"></div>
     <!--<div class="col-md-4" id ="editor"></div>-->
-    <div class="col-lg-6" id ="svg2"></div>
+    <div class="col-lg-6" id ="svg2container"></div>
 </div>
 
 <div class="row">
-    <div class="col-lg-6" id ="svg3"></div>
+    <div class="col-lg-6" id ="svg3container"></div>
     <!--<div class="col-md-4" id ="editor"></div>-->
     <div class="col-lg-6" id ="svg4"></div>
 </div>
@@ -164,15 +167,25 @@ div.tooltip2 {
 
     $(function(){
         $("#menuStrategy").on('click', 'li a', function(){
-            console.log("menu clicked");
+            console.log("menuStrategy clicked");
           $("#dropdownMenu1").val($(this).text());
           $("#dropdownMenu1").html($(this).text() + ' <span class="caret"></span>');
           selectedStrategy = $(this).text();
           console.log(selectedStrategy);
-          d3.select("#svg1").remove();
+          d3.select("#svg2").remove();
           stackedBarChart();
 
           // Do other stuff that is neccesary to change the d3 view below
+        });
+    });
+
+    $(function(){
+        $("#menuTime").on('click', 'li a', function() {
+            console.log("menuTime clicked");
+            $("#dropdownMenu2").val($(this).text());
+            $("#dropdownMenu2").html($(this).text() + ' <span class="caret"></span>');
+            selectedTime = $(this).text();
+            console.log(selectedTime);
         });
     });
 
@@ -193,6 +206,8 @@ div.tooltip2 {
 
     var selectedStrategy = "1e1h1m2j";
 
+    var selectedTime = "5 minutes";
+
     barChart();
     pieChart();
     stackedBarChart();
@@ -202,17 +217,18 @@ div.tooltip2 {
 
         var totalMatches = 0;
 
-        var div = d3.select("body").append("div")   
+        var div = d3.select("body").append("div")
             .attr("class", "tooltip")               
             .style("opacity", 0);
 
-        d3.select("#svg3").style("background-color", "aliceblue");
-
-        var svg3 = d3.select("#svg3").append("svg")
+        var svg3 = d3.select("#svg3container").append("svg")
+        .attr("id", "svg3")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        d3.select("#svg3").style("background-color", "aliceblue");
 
         // Load data: filter only overall stats
         d3.csv("ResultGeneral.csv", function(error, data) {
@@ -340,13 +356,15 @@ div.tooltip2 {
 
 
             // Start definition of second chart
-            d3.select("#svg2").style("background-color", "aliceblue");
 
-            var svg2 = d3.select("#svg2").append("svg")
+            var svg2 = d3.select("#svg1container").append("svg")
+            .attr("id", "svg1")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            d3.select("#svg2").style("background-color", "aliceblue");
 
 
             var x2 = d3.scale.ordinal()
@@ -427,8 +445,8 @@ div.tooltip2 {
 
     function stackedBarChart() {
         // In order for the margins to work we need to append a "g" (graphic) element to our svg
-        var svg1 = d3.select("#svg1container").append("svg")
-            .attr("id", "svg1")
+        var svg1 = d3.select("#svg2container").append("svg")
+            .attr("id", "svg2")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
