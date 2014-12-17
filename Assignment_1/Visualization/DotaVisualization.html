@@ -79,7 +79,7 @@ div.tooltip {
 
 
 <div class="row">
-    <div class="col-lg-6" id ="svg1"></div>
+    <div class="col-lg-6" id ="svg1container"></div>
     <!--<div class="col-md-4" id ="editor"></div>-->
     <div class="col-lg-6" id ="svg2"></div>
 </div>
@@ -128,12 +128,16 @@ div.tooltip {
 
     function fillDropDown(parsedInput) {
         var menu = '';
+        var currentName = "";
         for(var i=1; i<parsedInput.length; i++) {
-            menu += '<li role="presentation">';
-            // onclick="clickMenuItem();"
-            menu += '<a role="menuitem" tabindex="-1">';
-            menu += parsedInput[i][0];
-            menu += '</a></li>';
+            if(parsedInput[i][0] != currentName) {
+                currentName = parsedInput[i][0];
+                menu += '<li role="presentation">';
+                // onclick="clickMenuItem();"
+                menu += '<a role="menuitem" tabindex="-1">';
+                menu += parsedInput[i][0];
+                menu += '</a></li>';
+            }
         }
         menu += '</li>';
         menu += '</ul>';
@@ -145,6 +149,10 @@ div.tooltip {
             console.log("menu clicked");
           $("#dropdownMenu1").val($(this).text());
           $("#dropdownMenu1").html($(this).text() + ' <span class="caret"></span>');
+          selectedStrategy = $(this).text();
+          console.log(selectedStrategy);
+          d3.select("#svg1").remove();
+          stackedBarChart();
 
           // Do other stuff that is neccesary to change the d3 view below
         });
@@ -164,6 +172,8 @@ div.tooltip {
     var y = d3.scale.linear()
         .domain([0, 100])
         .rangeRound([height,0]);
+
+    var selectedStrategy = "1e1h1m2j";
 
     barChart();
     pieChart();
@@ -359,7 +369,8 @@ div.tooltip {
 
     function stackedBarChart() {
         // In order for the margins to work we need to append a "g" (graphic) element to our svg
-        var svg1 = d3.select("#svg1").append("svg")
+        var svg1 = d3.select("#svg1container").append("svg")
+            .attr("id", "svg1")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -388,8 +399,6 @@ div.tooltip {
             .scale(y)
             .orient("left")
             .tickFormat(d3.format(".0%"));
-
-        var selectedStrategy = "1e1h1m2j";
 
         var stackedBarData = [];
 
