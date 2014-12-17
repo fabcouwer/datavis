@@ -17,7 +17,9 @@ public class Runnable {
 	public static int tenMinuteTime = 600;
 	public static int fifteenMinuteTime = 900;
 
-	public static String exportFileName = "5minuteOpeningStrat.csv";
+	public static String exportFiveMinute = "5minuteOpeningStrat.csv";
+	public static String exportTenMinute = "10minuteOpeningStrat.csv";
+	public static String exportFifteenMinute = "15minuteOpeningStrat.csv";
 
 	public static void main(String[] args) {
 		Runnable run = new Runnable();
@@ -98,7 +100,7 @@ public class Runnable {
 		return input;
 	}
 
-	public void readFile(String fileName, int maxTime) {
+	public void readFile(String fileName, int maxTime, String outputFileName) {
 		// int matchCount = matchCountFile(fileName);
 		int matchCount = 194;
 		// Declare output arrays
@@ -444,7 +446,7 @@ public class Runnable {
 			outputRuleNumber++;
 
 			// Export to csv
-			exportToCSV(output);
+			exportToCSV(output, outputFileName);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -463,7 +465,7 @@ public class Runnable {
 		System.out.println("Done");
 	}
 
-	public void exportToCSV(String[][] output) {
+	public void exportToCSV(String[][] output, String exportFileName) {
 		String exportString = "";
 		for (int i = 0; i < output.length; i++) {
 			for (int k = 0; k < output[i].length; k++) {

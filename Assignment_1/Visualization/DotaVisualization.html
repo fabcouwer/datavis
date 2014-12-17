@@ -75,45 +75,46 @@ div.tooltip2 {
 }
 
 </style>
-<div class="row">
-    <div class="col-lg-6" id ="headerLeft">
-    </div>
-    <div class="col-lg-3" id ="headerRight">
-        <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-            Select from here
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" id="menuStrategy" role="menu" aria-labelledby="dropdownMenu1">
-          </ul>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3" id="headerRight2">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+                5minute
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
+                    <li role = "presentation"><a role="menuitem" tabindex="-1">5minute</a></li>
+                    <li role = "presentation"><a role="menuitem" tabindex="-1">10minute</a></li>
+                    <li role = "presentation"><a role="menuitem" tabindex="-1">15minute</a></li>
+              </ul>
+            </div>
         </div>
     </div>
-    <div class="col-lg-3" id="headerRight2">
-        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
-            Select from here
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
-                <li role = "presentation"><a role="menuitem" tabindex="-1">5 minutes</a></li>
-                <li role = "presentation"><a role="menuitem" tabindex="-1">10 minutes</a></li>
-                <li role = "presentation"><a role="menuitem" tabindex="-1">15 minutes</a></li>
-          </ul>
+    <div class="row">
+        <div class="col-lg-6" id ="svg1container"></div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6" id ="svg3container"></div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6" id ="headerLeft">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                Select from here
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id="menuStrategy" role="menu" aria-labelledby="dropdownMenu1">
+              </ul>
+            </div>
         </div>
     </div>
-</div>
 
-
-
-<div class="row">
-    <div class="col-lg-6" id ="svg1container"></div>
-    <!--<div class="col-md-4" id ="editor"></div>-->
-    <div class="col-lg-6" id ="svg2container"></div>
-</div>
-
-<div class="row">
-    <div class="col-lg-6" id ="svg3container"></div>
-    <!--<div class="col-md-4" id ="editor"></div>-->
-    <div class="col-lg-6" id ="svg4"></div>
+    <div class="row">
+        <div class="col-lg-6" id ="svg2container"></div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6" id ="svg4"></div>
+    </div>
 </div>
 
 
@@ -135,7 +136,7 @@ div.tooltip2 {
     $(document).ready(function() {
         $.ajax({
             type: "GET",
-            url: dataFileName,
+            url: "ResultGeneral" + selectedTime + ".csv",
             dataType: "text",
             success: function(data) {processData(data);}
          });
@@ -150,6 +151,9 @@ div.tooltip2 {
     function fillDropDown(parsedInput) {
         var menu = '';
         var currentName = "";
+        $("#dropdownMenu1").val(parsedInput[1][0]);
+        $("#dropdownMenu1").html(parsedInput[1][0] + ' <span class="caret"></span>');
+        selectedStrategy = parsedInput[1][0];
         for(var i=1; i<parsedInput.length; i++) {
             if(parsedInput[i][0] != currentName) {
                 currentName = parsedInput[i][0];
@@ -186,6 +190,12 @@ div.tooltip2 {
             $("#dropdownMenu2").html($(this).text() + ' <span class="caret"></span>');
             selectedTime = $(this).text();
             console.log(selectedTime);
+            d3.select("#svg1").remove();
+            d3.select("#svg2").remove();
+            d3.select("#svg3").remove();
+            stackedBarChart();
+            barChart();
+            pieChart();
         });
     });
 
@@ -204,9 +214,9 @@ div.tooltip2 {
         .domain([0, 100])
         .rangeRound([height,0]);
 
-    var selectedStrategy = "1e1h1m2j";
+    var selectedStrategy = "";
 
-    var selectedTime = "5 minutes";
+    var selectedTime = "5minute";
 
     barChart();
     pieChart();
@@ -231,7 +241,7 @@ div.tooltip2 {
         d3.select("#svg3").style("background-color", "aliceblue");
 
         // Load data: filter only overall stats
-        d3.csv("ResultGeneral.csv", function(error, data) {
+        d3.csv("ResultGeneral" +  selectedTime + ".csv", function(error, data) {
             data = data.filter(function(d){
                 if(d.Tier == "Overall") { return d; }
             });
@@ -303,7 +313,7 @@ div.tooltip2 {
     function barChart() {
         var barData = [];
         var strategyData = [];
-        d3.csv("ResultGeneral.csv", function(data) {
+        d3.csv("ResultGeneral" +  selectedTime + ".csv", function(data) {
             var name = "";
             var count;
             var counter = 0;
@@ -479,7 +489,7 @@ div.tooltip2 {
         var stackedBarData = [];
 
         //Load data
-        d3.csv("ResultMatchups.csv", function(error, data) {
+        d3.csv("ResultMatchups" + selectedTime + ".csv", function(error, data) {
             var name = "";
             var numberOfDifferentStrategies = 0;
             var differentStrategies = [];

@@ -11,9 +11,9 @@ import java.util.HashMap;
 // - A file for every strategy's performance against other strategies
 public class WinRateExtractor {
 
-	public static String inputFile = "5minuteOpeningStrat.csv";
-	public static String outputFile1 = "ResultGeneral.csv";
-	public static String outputFile2 = "ResultMatchups.csv";
+	public static String inputFile = "15minuteOpeningStrat.csv";
+	public static String outputFile1 = "ResultGeneral15minute.csv";
+	public static String outputFile2 = "ResultMatchups15minute.csv";
 	public static HashMap<String, OpeningStrategy> strats;
 
 	public static void main(String[] args) {
