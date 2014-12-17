@@ -100,7 +100,7 @@ div.tooltip2 {
         <div class="col-lg-6" id ="headerLeft">
             <div class="dropdown">
               <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                Select from here
+                 Select from here
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" id="menuStrategy" role="menu" aria-labelledby="dropdownMenu1">
@@ -214,13 +214,13 @@ div.tooltip2 {
         .domain([0, 100])
         .rangeRound([height,0]);
 
-    var selectedStrategy = "";
+    var selectedStrategy;
 
     var selectedTime = "5minute";
 
     barChart();
     pieChart();
-    stackedBarChart();
+    //stackedBarChart();
 
     function pieChart() {
         radius = Math.min(width, height) / 2;
@@ -490,6 +490,21 @@ div.tooltip2 {
 
         //Load data
         d3.csv("ResultMatchups" + selectedTime + ".csv", function(error, data) {
+
+            var chartData = [];
+             data.forEach(function(d) {
+                if(d.Strategy == selectedStrategy) {
+                    var value = {Opponent: d.Opponent,
+                                 Wins: +d.Wins,
+                                 Losses: +d.Losses};
+                    chartData.push(value);   
+                }
+            });
+
+            console.log("ChartData:");
+            console.log(chartData);
+
+            /*
             var name = "";
             var numberOfDifferentStrategies = 0;
             var differentStrategies = [];
@@ -497,7 +512,7 @@ div.tooltip2 {
                 if(name != d.Strategy && d.Strategy != selectedStrategy) {
                     name = d.Strategy;
                     numberOfDifferentStrategies++;
-                    differentStrategies[differentStrategies.length] = d.Strategy;
+                    differentStrategies[differentStrategies.length] = d.Strategy;   
                 }
             });
             name = "";
@@ -512,17 +527,22 @@ div.tooltip2 {
                 stackedBarData[i+1][1] = 1;
                 stackedBarData[i+1][2] = 0;
             }
+
+            var opponents = [];
             data.forEach(function(d) {
                 if(d.Strategy == selectedStrategy) {
                     for(i = 0; i < numberOfDifferentStrategies; i++) {
                         if(d.Opponent == differentStrategies[i-1]) {
+                            console.log(d.Opponent);
+                            opponents.push(d.Opponent);
                             stackedBarData[i][1] = +d.Wins;
                             stackedBarData[i][2] = +d.Losses;
                         }
                     }
                 }
             });
-
+            console.log("Opponents:");
+            console.log(opponents);
 
             //Remove entry from the first row of the input file
             stackedBarData.splice(0,1);
@@ -530,11 +550,12 @@ div.tooltip2 {
             //Map stackedbardata to something usable by the plot
             var chartData = [];
             for(var i = 0; i < stackedBarData.length; i++){
-                var value = {Opponent: stackedBarData[i][0],
-                             Wins: stackedBarData[i][1],
-                             Losses: stackedBarData[i][2]};
-                chartData.push(value);
+                    var value = {Opponent: stackedBarData[i][0],
+                                 Wins: stackedBarData[i][1],
+                                 Losses: stackedBarData[i][2]};
+                    chartData.push(value);
             }
+            */
 
             color.domain(d3.keys(chartData[0]).filter(function(key) { return key !== "Opponent"; }));
 
