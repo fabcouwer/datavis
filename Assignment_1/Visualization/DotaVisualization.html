@@ -32,10 +32,32 @@
     stroke: #cc2316;
 }
 
-
-
 .arc path {
     stroke: #fff;
+}
+
+text {     
+    font-family: sans-serif;     
+    font-size: 15px;
+    fill: black; 
+}
+
+body {
+  font: 10px sans-serif;
+}
+
+div.tooltip {
+    position: absolute;         
+    text-align: center;         
+    width: 100px;                    
+    height: 120px;                   
+    padding: 2px;               
+    font: 12px sans-serif;      
+    background: lightsteelblue; 
+    border: 0px;        
+    border-radius: 8px;         
+    pointer-events: none;
+
 }
 
 
@@ -151,92 +173,198 @@
     var y = d3.scale.linear()
         .domain([0, 100])
         .rangeRound([height,0]);
-    d3.select("#svgArea").style("background-color", "aliceblue");
+    d3.select("#svg1").style("background-color", "aliceblue");
 
-    var groupColor = d3.scale.category10()
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient('bottom');
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left');
- 
-    // Temp data
-    var dataA = [45, 45, 45, 45];
-    var dataB = [50, 40, 45, 55];
-    var dataC = [30, 40, 50, 60];
+    barChart();
+    pieChart();
 
-    var dataAll = [dataA, dataB, dataC];
-    var dataT = d3.transpose(dataAll);
-    var groups = dataAll.length;
+    function pieChart() {
+        radius = Math.min(width, height) / 2;
 
-    var tier = svg.selectAll('g')
-        .data(dataT)
-        .enter()
-        .append('g');
+        var totalMatches = 0;
 
-    tier.selectAll('rect')
-        .data(function (d) {return d;}) //here we are binding the tier list to children 
-        .enter()
-        .append('rect')
-        .attr('x', function (d, i, mainIndex) { return x(tiers[mainIndex]) + i * x.rangeBand() / groups; })
-        .attr('y', function (d) {return y(d) })
-        .attr('width', function () {return x.rangeBand() / groups; })
-        .attr('height', function (d) {return height - y(d);})
-        .attr('fill', function (d, i) {return groupColor(i);})
+        var div = d3.select("body").append("div")   
+            .attr("class", "tooltip")               
+            .style("opacity", 0);
 
-    svg.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + (height) + ')').call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", width-20)
-        .attr("y", -6)
-        .text("Tier");
+        d3.select("#svg3").style("background-color", "aliceblue");
 
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", 10)
-        .attr("y", 10)
-        .text("Winrate");
+        var svg3 = d3.select("#svg3").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    console.log("Done");    
+        // Load data: filter only overall stats
+        d3.csv("ResultGeneral.csv", function(error, data) {
+            data = data.filter(function(d){
+                if(d.Tier == "Overall") { return d; }
+            });
+            var name, count;
+            data.forEach(function(d) {
+                d.count = +((+d.Wins) + (+d.Losses));
+                totalMatches += +d.count;
+            });
 
+                // Make the pie chart
+            var arc = d3.svg.arc()
+                .innerRadius(radius - 10)
+                .outerRadius(0);
 
-    // Load the (dummy) data
-    /*
-    d3.csv("example_comp_data.csv", function(error, data) {
-        data.forEach(function(d)
-        {
-            d.match = +d.match;
-            d.tier = d.tier;
-            d.team = d.team;
-            d.topLane = +d.topLane;
-            d.midLane = +d.midLane;
-            d.bottomLane = +d.bottomLane;
-            d.jungle = +d.jungle;
-            d.winLose = d.winLose;
+            
+            var pie = d3.layout.pie()
+                .sort(null)
+                .value(function(d) { return d.count; });
+
+            // Easy colors accessible via a 20-step ordinal scale
+            var color = d3.scale.category20();
+
+            // Set up groups
+            var arcs = svg3.selectAll("g.arc")
+                .data(pie(data))
+                .enter()
+                .append("g")
+                .attr("class", "arc")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+                .on("mouseover", function (d) {
+                    var percentage = Math.round(d.data.count/totalMatches * 10000) / 100;
+                    var winrate = Math.round(d.data.Winrate * 10000) / 100;
+                    var tooltip = d.data.Strategy + ".<br> Played in " + d.data.count + " of " + totalMatches + " matches (" + percentage 
+                        + "%).<br> Winrate: " + winrate + "%.";
+                    div.transition()        
+                        .duration(200)      
+                        .style("opacity", .9);  
+                    div.html(tooltip)
+                        .style("left", (d3.event.pageX) + "px")     
+                        .style("top", (d3.event.pageY - 28) + "px")
+                        .style("opacity", 1);
+                })
+                .on("mouseout", function () {
+                    div.transition()        
+                        .duration(500)      
+                        .style("opacity", 0);
+                });
+
+            // Draw arc paths
+            arcs.append("path")
+                .attr("fill", function (d, i) {
+                return color(i);
+            })
+                .attr("d", arc);
+
+            // Labels
+            arcs.append("text")
+                .attr("transform", function (d) {
+                return "translate(" + arc.centroid(d) + ")";
+            })
+                .attr("text-anchor", "middle")
+                .text(function (d) {
+                return d.data.Strategy;
+            });
+        });
+        console.log("Done pie chart");
+    }
+
+    function barChart() {
+        var totalMatches;
+        var barData = [];
+        d3.csv("ResultGeneral.csv", function(data) {
+            var name = "";
+            var count;
+            var counter = 0;
+            data.forEach(function(d) {
+                if(name == d.Strategy) {
+                }
+                else if(name == "") {
+                    name = d.Strategy;
+                    barData[counter] = [0, 0, 0, 0, 0];
+                }
+                else {
+                    counter++;
+                    name = d.Strategy;
+                    barData[counter] = [0, 0, 0, 0, 0];
+                }
+                if(d.Tier == "Overall") {
+                    barData[counter][4] = d.Winrate*100;
+                }
+                else if(d.Tier == "Pro") {
+                    barData[counter][3] = d.Winrate*100;
+                }
+                else if(d.Tier == "VeryHigh") {
+                    barData[counter][2] = d.Winrate*100;
+                }
+                else if(d.Tier == "High") {
+                    barData[counter][1] = d.Winrate*100;
+                }
+                else{
+                    barData[counter][0] = d.Winrate*100;
+                }
+            });
+
+            // Start definition of second chart
+            d3.select("#svg2").style("background-color", "aliceblue");
+
+            var svg2 = d3.select("#svg2").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var x2 = d3.scale.ordinal()
+                .domain(tiers)
+                .rangeRoundBands([0, width], 0.2);
+            var y2 = d3.scale.linear()
+                .domain([0, 100])
+                .rangeRound([height,0]);
+
+            var groupColor = d3.scale.category10()
+            var xAxis2 = d3.svg.axis()
+                .scale(x2)
+                .orient('bottom');
+            var yAxis2 = d3.svg.axis()
+                .scale(y2)
+                .orient('left');
+
+            var dataT = d3.transpose(barData);
+            var tier2 = svg2.selectAll('g')
+                .data(dataT)
+                .enter()
+                .append('g');
+            var groups2 = barData.length;
+
+            tier2.selectAll('rect')
+            .data(function (d) {return d;}) //here we are binding the tier list to children 
+            .enter()
+            .append('rect')
+            .attr('x', function (d, i, mainIndex) { return x(tiers[mainIndex]) + i * x.rangeBand() / groups2; })
+            .attr('y', function (d) {return y(d) })
+            .attr('width', function () {return x.rangeBand() / groups2; })
+            .attr('height', function (d) {return height - y(d);})
+            .attr('fill', function (d, i) {return groupColor(i);})
+
+            svg2.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + (height) + ')').call(xAxis2)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width-20)
+            .attr("y", -6)
+            .text("Tier");
+
+            svg2.append("g")
+            .attr("class", "y axis")
+            .call(yAxis2)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", 10)
+            .attr("y", 10)
+            .text("Winrate");
+
+            console.log("Done bar chart");
+
 
         });
-        console.log()
-        });
-    */
-
-    //TODO Extract different lineups from data
-
-    //TODO Calculate win %'s for different lineups
-
-    //TODO Visualize win %'s in a bar chart
-
-
-
-    //TODO Other visualizations:
-        //Calc/Vis other stats for lineups?
-        //Calculate stats for matchups
-        //Visualize stats for matchups
+    }
     </script>
 </body>
 </html>
