@@ -63,7 +63,7 @@ div.tooltip2 {
     position: absolute;         
     text-align: center;         
     width: 100px;                    
-    height: 150px;                   
+    height: 160px;                   
     padding: 2px;               
     font: 12px sans-serif;      
     background: lightsteelblue; 
@@ -78,13 +78,22 @@ div.tooltip2 {
 <div class="row">
     <div class="col-lg-6" id ="headerLeft">
     </div>
-    <div class="col-lg-6" id ="headerRight">
+    <div class="col-lg-3" id ="headerRight">
         <div class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
             Select from here
             <span class="caret"></span>
           </button>
-          <ul class="dropdown-menu" id="menu" role="menu" aria-labelledby="dropdownMenu1">
+          <ul class="dropdown-menu" id="menuStrategy" role="menu" aria-labelledby="dropdownMenu1">
+          </ul>
+        </div>
+    </div>
+    <div class="col-lg-3" id="headerRight2">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+            Select from here
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
           </ul>
         </div>
     </div>
@@ -135,11 +144,6 @@ div.tooltip2 {
         fillDropDown(parsedInput);
     }
 
-    function clickMenuItem() {
-        console.log("Menu item clicked!");
-        //$('#dropdownMenu1').
-    }
-
     function fillDropDown(parsedInput) {
         var menu = '';
         var currentName = "";
@@ -155,11 +159,11 @@ div.tooltip2 {
         }
         menu += '</li>';
         menu += '</ul>';
-        $('#menu').html(menu);
+        $('#menuStrategy').html(menu);
     }
 
     $(function(){
-        $(".dropdown-menu").on('click', 'li a', function(){
+        $("#menuStrategy").on('click', 'li a', function(){
             console.log("menu clicked");
           $("#dropdownMenu1").val($(this).text());
           $("#dropdownMenu1").html($(this).text() + ' <span class="caret"></span>');
@@ -330,8 +334,8 @@ div.tooltip2 {
             });
 
             //Add tooltip
-            var div = d3.select("#svg1").append("div")   
-                .attr("class", "tooltip")               
+            var div = d3.select("body").append("div")   
+                .attr("class", "tooltip2")               
                 .style("opacity", 0);
 
 
@@ -378,11 +382,11 @@ div.tooltip2 {
             .attr('fill', function (d, i) {return groupColor(i);})
             .on("mouseover", function (d, i) {
                     var tooltip2 = "Strategy: " + strategyData[i].name + "<br><br>Winrates: "
-                                + "Normal: " + Math.round(strategyData[i].normal*10000)/100
-                                + "%, High: " + Math.round(strategyData[i].high*10000)/100
-                                + "%, Very High: " + Math.round(strategyData[i].veryhigh*10000)/100
-                                + "%, Pro: " + Math.round(strategyData[i].pro*10000)/100
-                                + "%, Overall: " + Math.round(strategyData[i].overall*10000)/100 + "%.";
+                                + "<br>Normal: " + Math.round(strategyData[i].normal*10000)/100
+                                + "%, <br>High: " + Math.round(strategyData[i].high*10000)/100
+                                + "%, <br>Very High: " + Math.round(strategyData[i].veryhigh*10000)/100
+                                + "%, <br>Pro: " + Math.round(strategyData[i].pro*10000)/100
+                                + "%, <br>Overall: " + Math.round(strategyData[i].overall*10000)/100 + "%.";
                     div.transition()        
                         .duration(200)      
                         .style("opacity", .9);  
@@ -431,7 +435,7 @@ div.tooltip2 {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         //Add tooltip
-        var div = d3.select("#svg1").append("div")   
+        var div = d3.select("body").append("div")   
             .attr("class", "tooltip")               
             .style("opacity", 0);
 
