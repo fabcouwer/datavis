@@ -57,6 +57,20 @@ div.tooltip {
     border: 0px;        
     border-radius: 8px;         
     pointer-events: none;
+}
+
+div.tooltip2 {
+    position: absolute;         
+    text-align: center;         
+    width: 100px;                    
+    height: 150px;                   
+    padding: 2px;               
+    font: 12px sans-serif;      
+    background: lightsteelblue; 
+    border: 0px;        
+    border-radius: 8px;         
+    pointer-events: none; 
+}
 
 }
 
@@ -230,8 +244,8 @@ div.tooltip {
                 .on("mouseover", function (d) {
                     var percentage = Math.round(d.data.count/totalMatches * 10000) / 100;
                     var winrate = Math.round(d.data.Winrate * 10000) / 100;
-                    var tooltip = d.data.Strategy + ".<br> Played in " + d.data.count + " of " + totalMatches + " matches (" + percentage 
-                        + "%).<br> Winrate: " + winrate + "%.";
+                    var tooltip = d.data.Strategy + ".<br><br> Played in " + d.data.count + " of " + totalMatches + " matches (" + percentage 
+                        + "%).<br><br> Winrate: " + winrate + "%.";
                     div.transition()        
                         .duration(200)      
                         .style("opacity", .9);  
@@ -267,40 +281,59 @@ div.tooltip {
     }
 
     function barChart() {
-        var totalMatches;
         var barData = [];
+        var strategyData = [];
         d3.csv("ResultGeneral.csv", function(data) {
             var name = "";
             var count;
             var counter = 0;
+            var strat;
             data.forEach(function(d) {
                 if(name == d.Strategy) {
                 }
                 else if(name == "") {
                     name = d.Strategy;
+                    //Fill new strat object
+                    strat = {name: d.Strategy, overall: 0, pro: 0, veryhigh: 0, high: 0, normal: 0};
                     barData[counter] = [0, 0, 0, 0, 0];
                 }
                 else {
                     counter++;
+                    if(strat != null){
+                        strategyData.push(strat);
+                    }
+                    //Fill new strat object
+                    strat = {name: d.Strategy, overall: 0, pro: 0, veryhigh: 0, high: 0, normal: 0};
                     name = d.Strategy;
                     barData[counter] = [0, 0, 0, 0, 0];
                 }
                 if(d.Tier == "Overall") {
                     barData[counter][4] = d.Winrate*100;
+                    strat.overall = d.Winrate;
                 }
                 else if(d.Tier == "Pro") {
                     barData[counter][3] = d.Winrate*100;
+                    strat.pro = d.Winrate;
                 }
                 else if(d.Tier == "VeryHigh") {
                     barData[counter][2] = d.Winrate*100;
+                    strat.veryhigh = d.Winrate;
                 }
                 else if(d.Tier == "High") {
                     barData[counter][1] = d.Winrate*100;
+                    strat.high = d.Winrate;
                 }
                 else{
                     barData[counter][0] = d.Winrate*100;
+                    strat.normal = d.Winrate;
                 }
             });
+
+            //Add tooltip
+            var div = d3.select("#svg1").append("div")   
+                .attr("class", "tooltip")               
+                .style("opacity", 0);
+
 
             // Start definition of second chart
             d3.select("#svg2").style("background-color", "aliceblue");
@@ -310,6 +343,7 @@ div.tooltip {
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
             var x2 = d3.scale.ordinal()
                 .domain(tiers)
@@ -342,6 +376,26 @@ div.tooltip {
             .attr('width', function () {return x.rangeBand() / groups2; })
             .attr('height', function (d) {return height - y(d);})
             .attr('fill', function (d, i) {return groupColor(i);})
+            .on("mouseover", function (d, i) {
+                    var tooltip2 = "Strategy: " + strategyData[i].name + "<br><br>Winrates: "
+                                + "Normal: " + Math.round(strategyData[i].normal*10000)/100
+                                + "%, High: " + Math.round(strategyData[i].high*10000)/100
+                                + "%, Very High: " + Math.round(strategyData[i].veryhigh*10000)/100
+                                + "%, Pro: " + Math.round(strategyData[i].pro*10000)/100
+                                + "%, Overall: " + Math.round(strategyData[i].overall*10000)/100 + "%.";
+                    div.transition()        
+                        .duration(200)      
+                        .style("opacity", .9);  
+                    div.html(tooltip2)
+                        .style("left", (d3.event.pageX) + "px")     
+                        .style("top", (d3.event.pageY - 28) + "px")
+                        .style("opacity", 1);
+                })
+                .on("mouseout", function () {
+                    div.transition()        
+                        .duration(500)      
+                        .style("opacity", 0);
+                });
 
             svg2.append('g')
             .attr('class', 'x axis')
