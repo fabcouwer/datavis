@@ -22,7 +22,7 @@ Marijn Goedegebure \\
 \section{Introduction}
 This report contains a description of our work for the Game Analytics assignment for the 2014 Data Visualization course.
 For this assignment, we were asked to use the provided datasets and the D3 visualization package to investigate the following question: \textbf{\textit{How can we (i) analyze trajectory data in order to give players of Dota 2 significant insights and (ii) visualize it so that they can improve their performance?"}}
-In this report, we will first describe our analysis of the dataset and the different options for visualization we considered. Then, we will demonstrate the results of our work.
+In this report, we will first describe our analysis of the dataset and the different options for visualization we considered. Then, we will discuss how we arrived at our results, which can be found in the enclosed HTML file.
 
 \section{The Data}
 The data we received can be divided into two distinct parts: a team distance dataset and a player trajectory dataset.
@@ -49,14 +49,18 @@ The player trajectory dataset contains data in the Space and Time dimensions, me
 In the end, we chose to investigate extracting information about opening strategies from the dataset for this project, as we considered it to be the most promising out of the four options.
 
 \section{Visualization}
-- What did we make and how does it work
-- What conclusions can we draw from the data
-- What future work could be interesting
+We used Java to extract information about opening strategies from the dataset. By looking at the zones each player spends the highest percentage of time in, we can extract an opening strategy, for example "2 Easy lane, 2 Hard lane, 1 Middle lane, 0 Jungle". Our code for doing this is included in the files we handed in.
+It should be noted that we found two matches in the dataset which were formatted as having 6 players on one team, and 4 on the other team. These were the matches with MatchID's 643216184 and 626684019. We pruned these matches from the dataset before generating our dataset.\\
 
 
-Matchid's of bad data:
-643216184
-626684019
+For each player, the area they spend most of their time in is the lane they belong to. Players who did not spend a significant amount of time in one type of area (easy, hard, mid or jungle) were considered 'roaming' players and were recorded as 'jungle' players. Though we could have added a separate category for roaming players, we felt it would add unneeded complexity to our results, as well as be very hard to reliably determine whether a player is truly roaming. We generated datasets based on this method for the first 5, 10 and 15 minutes of the game, between which you can switch in the visualization.\\
+
+ 
+The output from Java is divided into two files: The first isResultGeneral, which includes win, loss and winrate statistics for each strategy extracted from the data, divided into the skill tiers of the matches and an overall measurement. The second is ResultMatchups, which includes win, loss and winrate statistics for each matchup every strategy had.\\
+
+Using D3, we generated visualizations based on the information extracted about opening strategies. For formatting, we used Bootstrap.
+Please see the enclosed HTML file for the visualizations and explanation.
+
 
 
 \bibliographystyle{abbrv}
