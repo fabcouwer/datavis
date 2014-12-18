@@ -138,11 +138,14 @@ div.tooltip2 {
 
 <div class="container col-centered">
     <div class="jumbotron jumbotronPadding">
-        <h1>Dota data visualisation</h1>
-        <h3>Our visualisation features three visualisations:</h3>
-        <p>The first is a bar chart with overall data. <a class="" href="#" role="button" id="LearnMore1">Learn more.</a></p>
-        <p>The second is a pie chart with overall data. <a class="" href="#" role="button" id="LearnMore2">Learn more.</a></p>
-        <p>The third is a stacked bar chart for specific data. <a class="" href="#" role="button" id="LearnMore3">Learn more.</a></p>
+        <h1>DotA 2 Data Visualisation</h1>
+        <h4>Authors: Friso Abcouwer (4019873) & Marijn Goedegebure (4013484)</h2>
+        <h3>Our visualisation consists of three parts:</h3>
+        <p>The first is a <a class="" href="#" role="button" id="LearnMore1">bar chart</a> mapping the performance of different opening strategies across player skill levels.</p>
+        <p>The second is a <a class="" href="#" role="button" id="LearnMore2">pie chart</a> showing the prevalence of the different opening strategies in the dataset.</p>
+        <p>The third is a <a class="" href="#" role="button" id="LearnMore3">stacked bar chart</a> that displays the performance of a single opening strategy against all of its opponents in the dataset.</p>
+        <p>By using the <b>navbar</b> at the top of the screen, you can select to use data from the first 5, 10 or 15 minutes of the matches in the dataset, as well as set the opening strategy to be used for the stacked bar chart.</p>
+        <p>All three visualisations include <b>tooltips</b> on mouseover for more detailed information.</p>
     </div>
 
     <div class="row">
@@ -153,13 +156,17 @@ div.tooltip2 {
     <div class="row">
         <div class="col-lg-8" id ="svg1container"></div>
         <div class="col-lg-4">
-            <p>Explanation for the bar chart</p>
+            <p style="font-size:14px"><br>Since there are several strategies for which we have very limited data (5 matches or less), the bar chart might give a distorted image of what the most successful strategies are. We decided it was important to include these strategies for completeness, however: the other two visualizations give a clearer image of how strategies perform, as well.<br><br>
+            Disregarding strategies that show an exceptionally high or low winrate due to limited data, there does not seem to be a clear 'certain win strategy': the most popular strategies used by players across all skill levels have an average winrate of slightly over 50%. We expect this is because these strategies win about half of their matches against other popular strategies, and win a majority of their matches against more unorthodox strategies.<br><br>
+            Finally, it is interesting to note that players at high skill levels seem to use more different types of strategies and that they are also more successful in using them than lower-level players.</p>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-8" id ="svg3container"></div>
         <div class="col-lg-4">
-            <p>Explanation for the pie chart</p>
+            <p style="font-size:14px"><br>The pie chart shows that standard team divisions such as 2-1-1-1 and 2-2-1-0 are by far the most popular. 
+                Apart from a few strategies for which we have only information on a very small amount of matches, they also seem to perform better than other, more uncommon strategies, such as a trilane on the easy lane, which wins only about 1/3rd of its matches.<br><br>
+            An interesting opening strategy that occurs often is 1 easy, 1 hard, 1 mid and 2 jungle. We believe this strategy is more or less the same as 2 easy, 1 hard, 1 mid, 1 jungle: there is one dedicated jungle player, and the second player who spends a lot of time in the jungle is most likely an easy lane support player who guards the forest in the early game and performs a lot of creep stacking and pulling. The alternative explanation is that there are, in fact, two jungle players, but we do not think the winrate for this strategy would be over 50% if there were actually two jungle players: their team would either have a large gold and experience disadvantage, or would be more prone to being picked off because their team is spread out across the map too much.</p>
         </div>
     </div>
     <div class="row">
@@ -170,7 +177,9 @@ div.tooltip2 {
     <div class="row">
         <div class="col-lg-8" id ="svg2container"></div>
         <div class="col-lg-4">
-            <p>Explanation for the stacked bar chart</p>
+            <p style="font-size:14px"><br>The stacked bar serves to illustrate how a strategy's performance is divided amongst matchups with other strategies.
+            Since a lot of strategies have only played a small number of matches, there are often completely red or green bars in the data. We could also have visualised absolute wins and losses rather than a percentage, but we believe this would have made the matchups with a small sample size become very hard to read.<br><br>
+            Our expectation that overall, strategies have a winrate close to 50% against other popular strategies, seems to hold. Matchups with few matches tend to gravitate towards a 100% or 0% winrate, while matchups for which there is more data usually show a much more realistic value.</p>
         </div>
     </div>
 </div>
@@ -295,7 +304,7 @@ div.tooltip2 {
     readData();
 
     // Create the margin and size of the canvas
-    var margin = {top: 25, right: 25, bottom: 25, left: 25};
+    var margin = {top: 25, right: 25, bottom: 25, left: 50};
     width = 700 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
@@ -398,7 +407,6 @@ div.tooltip2 {
                 return d.data.Strategy;
             });
         });
-        console.log("Done pie chart");
     }
 
     function barChart() {
@@ -472,16 +480,17 @@ div.tooltip2 {
                 .domain(tiers)
                 .rangeRoundBands([0, width], 0.2);
             var y2 = d3.scale.linear()
-                .domain([0, 100])
+                .domain([0, 1])
                 .rangeRound([height,0]);
 
-            var groupColor = d3.scale.category10()
+            var groupColor = d3.scale.category20()
             var xAxis2 = d3.svg.axis()
                 .scale(x2)
                 .orient('bottom');
             var yAxis2 = d3.svg.axis()
                 .scale(y2)
-                .orient('left');
+                .orient('left')
+                .tickFormat(d3.format(".0%"));
 
             var dataT = d3.transpose(barData);
             var tier2 = svg2.selectAll('g')
@@ -538,9 +547,6 @@ div.tooltip2 {
             .attr("y", 10)
             .text("Winrate");
 
-            console.log("Done bar chart");
-
-
         });
     }
 
@@ -591,62 +597,6 @@ div.tooltip2 {
                     chartData.push(value);   
                 }
             });
-
-            console.log("ChartData:");
-            console.log(chartData);
-
-            /*
-            var name = "";
-            var numberOfDifferentStrategies = 0;
-            var differentStrategies = [];
-            data.forEach(function(d) {
-                if(name != d.Strategy && d.Strategy != selectedStrategy) {
-                    name = d.Strategy;
-                    numberOfDifferentStrategies++;
-                    differentStrategies[differentStrategies.length] = d.Strategy;   
-                }
-            });
-            name = "";
-            var counter = 0;
-            stackedBarData[counter] = [];
-            stackedBarData[counter][0] = "Strategy";
-            stackedBarData[counter][1] = "Wins";
-            stackedBarData[counter][2] = "Losses";
-            for(i = 0; i < numberOfDifferentStrategies; i++) {
-                stackedBarData[i+1] = [];
-                stackedBarData[i+1][0] = differentStrategies[i];
-                stackedBarData[i+1][1] = 1;
-                stackedBarData[i+1][2] = 0;
-            }
-
-            var opponents = [];
-            data.forEach(function(d) {
-                if(d.Strategy == selectedStrategy) {
-                    for(i = 0; i < numberOfDifferentStrategies; i++) {
-                        if(d.Opponent == differentStrategies[i-1]) {
-                            console.log(d.Opponent);
-                            opponents.push(d.Opponent);
-                            stackedBarData[i][1] = +d.Wins;
-                            stackedBarData[i][2] = +d.Losses;
-                        }
-                    }
-                }
-            });
-            console.log("Opponents:");
-            console.log(opponents);
-
-            //Remove entry from the first row of the input file
-            stackedBarData.splice(0,1);
-
-            //Map stackedbardata to something usable by the plot
-            var chartData = [];
-            for(var i = 0; i < stackedBarData.length; i++){
-                    var value = {Opponent: stackedBarData[i][0],
-                                 Wins: stackedBarData[i][1],
-                                 Losses: stackedBarData[i][2]};
-                    chartData.push(value);
-            }
-            */
 
             color.domain(d3.keys(chartData[0]).filter(function(key) { return key !== "Opponent"; }));
 
