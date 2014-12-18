@@ -1,0 +1,50 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[english]{babel}
+\usepackage{a4wide}
+\usepackage{float}
+\usepackage{enumerate}
+\usepackage{hyperref}
+
+\title{IN4086 Data Visualization \\
+Project Proposal \\ }
+\author{
+Friso Abcouwer \\
+4019873 \\
+\and
+Marijn Goedegebure \\
+4013484
+}
+
+\begin{document}
+\maketitle{}
+\newpage
+
+\section{Problem Description}
+In the Netherlands, there are a lot of available methods of public transportation, such as trams, trains and buses.
+A lot of people rely on websites like \url{http://9292.nl} to help them navigate the public transportation system, but might not be aware of all of the public transportation options in their area. The people responsible for managing the public transportation network want to know where there is a high demand for new or expanded services, and they need some way to find areas like this.
+Therefore, we would like to make a tool that visualises public transportation in the Netherlands. We imagine this to be a Google Maps-type application which provides overlays for certain purposes. Examples include:
+\begin{itemize}
+\item Heatmaps for number of different services / number of stops per hour
+\item Listing of relevant public transportation services close to a certain address (search function)
+\item Comparison of public transportation availability with population density
+\end{itemize}
+We believe we can use open data from \url{http://openov.nl} to make this application. Then, we can combine it with other datasets to generate interesting overlays, like the population density example.
+
+\section{Tools and Techniques}
+\begin{itemize}
+\item \textbf{Java} for most of the `heavy lifting'.
+\item \textbf{HTML5/Bootstrap/JavaScript} to generate an interactive webpage.
+\item The \textbf{Google Maps API} (or a similar tool) to generate maps.
+\item \textbf{D3 or JavaFX} for any necessary visualizations apart from the interactive map.
+\end{itemize}
+
+\section{Deliverables}
+\begin{itemize}
+\item A usable tool in the form of a webpage.
+\item Commented source code of the provided tool.
+\item A (short) report explaining and motivating our design choices.
+\item A short 5 minute presentation showcasing our project.
+\end{itemize}
+
+\end{document}
+
