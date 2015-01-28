@@ -1,0 +1,15 @@
+
+Maps Engine Cookbook
+https://static.googleusercontent.com/media/www.google.com/en/us/support/enterprise/static/geo/gme/cookbook/Google_Maps_Engine_Cookbook.pdf
+
+Google GeoChart
+https://developers.google.com/chart/interactive/docs/gallery/geochart
+
+Google Maps Engine
+https://developers.google.com/maps-engine/
+
+Google Maps JavaScript API
+https://developers.google.com/maps/documentation/javascript/shapes
+
+Choropleth Maps with Google Fusion Tables
+http://digitalsplashmedia.com/2014/07/creating-choropleth-maps-with-google-fusion-tables/
