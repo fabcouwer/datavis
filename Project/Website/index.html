@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Project</title>
+    <meta charset="utf-8">
+    <link href=bootstrap-3.1.1-dist/css/bootstrap.css rel=stylesheet media="screen">
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH5IVSW7cKqUUoCyG_jbEXvpx4hyBo0Zc"></script>
+    <script src=jquery-2.1.1.js></script>
+    <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
+    <script type="text/javascript">
+
+        var stops = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274]];
+        var markers = [];
+        var googleMap;
+        //var map;
+      function initialize() {
+        var mapOptions = {
+          center: { lat: 52.011826, lng: 4.541892},
+          zoom: 15
+        };
+        googleMap = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+
+        initializeMarkers();
+        // To add the marker to the map, call setMap();
+        //        marker.setMap(googleMap);
+
+        showMarkers();
+        //hideMarkers();
+      }
+
+      function initializeMarkers() {
+        for (i = 0; i<stops.length;i++) {
+            var temp = new google.maps.Marker({
+                position: new google.maps.LatLng(stops[i][0],stops[i][1]),
+                title: "busStop" + i,
+            });
+            markers.push(temp);
+        }
+      }
+/*
+      function loadScript() {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&' + 'callback=initialize';
+
+        document.body.appendChild(script);
+      }*/
+
+      function showMarkers() {
+        for(i = 0;i<markers.length;i++) {
+            var marker = markers[i];
+            marker.setMap(googleMap);
+        }
+      }
+
+      function hideMarkers() {
+        for(i = 0;i<markers.length;i++) {
+            var marker = markers[i];
+            marker.setMap(null);
+        }
+      }
+
+      //window.onload = loadScript;
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</head>
+<style>
+#map-canvas {
+    height: 800px;
+    width: 1100px; 
+    margin-left: auto; 
+    margin-right: auto; 
+}
+
+.jumbotronPadding{
+    padding: 30px 15px;
+    margin-top: 80px;
+}
+</style>
+
+<!--<div id='editor'></div>-->
+
+
+<body onload="initialize()">
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+              <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand">OpenOV Visualization</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+                    </div>
+                </div>
+        </nav>
+
+        <div class="container col-centered">
+            <div class="jumbotron jumbotronPadding">
+                <h1>OpenOV visualization</h1>
+                <h4>Authors: Friso Abcouwer (4019873) & Marijn Goedegebure (4013484)</h4>
+            </div>
+        </div>
+        <div class="container col-centered">
+            <div class="row">
+                <div id="map-canvas"></div>
+            </div>
+        </div>
+    </div>
+    <div id="footer" style="height:50px">
+    </div>
+</body>
+</html>
