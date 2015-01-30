@@ -9,6 +9,7 @@ public class PTStop {
 	private String id;
 	private String name;
 	private String town;
+	private String province;
 	private String latitude;
 	private String longitude;
 
@@ -65,6 +66,14 @@ public class PTStop {
 
 	public void setTown(String town) {
 		this.town = town;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
 	}
 
 	public String getLatitude() {

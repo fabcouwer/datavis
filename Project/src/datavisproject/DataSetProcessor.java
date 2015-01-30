@@ -3,6 +3,7 @@ package datavisproject;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 //Processes the datasets from OpenOV into a format usable in our visualization
@@ -10,12 +11,14 @@ public class DataSetProcessor {
 
 	public static String fileName = "C:\\Users\\F\\Downloads\\stops.csv";
 	public static String fileName2 = "C:\\Users\\F\\Downloads\\routes-at-stop.csv";
+	public static String fileName3 = "C:\\Users\\F\\Downloads\\gemeenten.csv";
 	public static HashMap<String, PTStop> busstops;
 
 	public static void main(String[] args) {
 		busstops = new HashMap<String, PTStop>();
 		readPTStops();
 		readRoutesAtStop();
+		setProvinces();
 	}
 
 	// Parse stops.csv into PTStop objects
@@ -71,16 +74,17 @@ public class DataSetProcessor {
 						PTStop ptstop = new PTStop(id, name, town, latitude,
 								longitude);
 						busstops.put(id, ptstop);
-						//System.out.println(ptstop.toString());
+						// System.out.println(ptstop.toString());
 					} else {
-						//System.out.println("Omitted this entry.");
+						// System.out.println("Omitted this entry.");
 						count++;
 					}
 					sc.close();
 				}
-				//System.out.println("SEPARATOR");
 			}
-			System.out.println("Number of lines omitted: " + count);
+			br.close();
+			System.out.println("Reading stops - done.");
+			System.out.println("Number of lines omitted: " + count + ".");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -107,13 +111,48 @@ public class DataSetProcessor {
 					for (int i = 0; i < routes.length; i++) {
 						ptstop.addLine(routes[i]);
 					}
-					System.out.println(ptstop.toString());
+					// System.out.println(ptstop.toString());
 				}
 			}
+			br.close();
+			System.out.println("Combining stops and routes - done.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void setProvinces() {
+		System.out.println("There are " + busstops.size()
+				+ " distinct bus stops.");
+		int count = 0;
+		HashMap<String, String> townProvince = new HashMap<String, String>();
+		// Create town-province hashmap
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName3));
+			String line = br.readLine();
+			while ((line = br.readLine()) != null) {
+				String[] splitLine = line.split(";");
+				townProvince.put(splitLine[0], splitLine[3]);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		// Add province to every PTStop
+		PTStop current;
+		String province;
+		for(Map.Entry<String, PTStop> entry : busstops.entrySet()){
+			current = entry.getValue();
+			province = townProvince.get(current.getTown());
+			if(province != null){
+			entry.getValue().setProvince(province);
+			}
+			else{
+				System.out.println(current.getTown());
+				count++;
+			}
+		}
+		System.out.println("Final count: " + count);
 	}
-
 }
