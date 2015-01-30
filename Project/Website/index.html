@@ -12,28 +12,49 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
     <script src=jquery-2.1.1.js></script>
     <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
     <script type="text/javascript">
-
-    function readData() {
-        $(document).ready(function() {
-            $.ajax({
-                type: "GET",
-                url: "pronvincies.kml",
-                dataType: "text",
-                success: function(data) {processData(data);}
-             });
-        });
-    }
-
+        var geoXml = null;
+        var geoXmlDoc = null;
         var stops = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274]];
-        var gemeente = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274]];
+        var gemeente = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274],[52.011826, 4.541892]];
         var gemeenteCoords = [];
         var markers = [];
         var googleMap;
         var infoWindow;
         var polygons = [];
         var busStoptriangle;
+        var kmlLayerProvincies;
+        var kmlLayerGemeenten;
+        var currentActiveCtaLayer;
+
+        var provincieFileName = "File:///C:/Users/Marijn/Documents/datavis/Project/Website/testPronvincies.txt";
+        function readTextFile(file)
+        {
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function ()
+            {
+                if(rawFile.readyState === 4)
+                {
+                    if(rawFile.status === 200 || rawFile.status == 0)
+                    {
+                        var allText = rawFile.responseText;
+                        processText(allText);
+                    }
+                }
+            }
+            rawFile.send(null);
+        }
+        function processText(text) {
+          var splitted = text.split(",");
+          console.log(splitted);
+        }
+
         //var map;
       function initialize() {
+        readTextFile(provincieFileName);
+        //readData(gemeenteFileName);
+
+
         var mapOptions = {
           center: { lat: 52.011826, lng: 4.541892},
           zoom: 8
@@ -45,16 +66,48 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         convertGemeenteToCoords();
         createPolygon();
         google.maps.event.addListener(busStoptriangle, 'click', showArrays);
+
+
         infoWindow = new google.maps.InfoWindow();
 
-        var ctaLayer = new google.maps.KmlLayer({
-            url: 'https://www.dropbox.com/s/mp8gsfalguj1mtf/gemeenten.kml?dl=1'
-        });
-        ctaLayer.setMap(googleMap);
-
-
         showMarkers();
-        //hideMarkers();
+
+        showProvincies();
+
+        google.maps.event.addListener(kmlLayerProvincies, 'click', function(kmlEvent){
+            var text = kmlEvent.featureData.description;
+            console.log(text);
+        });
+      }
+
+      function hideKMLLayer() {
+        if(currentActiveCtaLayer == "Provincies") {
+          kmlLayerProvincies.setMap(null);
+        }
+        else if(currentActiveCtaLayer == "Gemeenten") {
+          kmlLayerGemeenten.setMap(null);
+        }
+        currentActiveCtaLayer = "";
+      }
+
+      function showProvincies() {
+        if(kmlLayerProvincies == null) {
+          kmlLayerProvincies = new google.maps.KmlLayer({
+            url: 'https://www.dropbox.com/s/buzo995dfi5z0xa/pronvincies.kml?dl=1'
+          });
+        }
+        currentActiveCtaLayer = "Provincies";
+        kmlLayerProvincies.setMap(googleMap);
+      }
+
+      function showGemeenten() {
+        if(kmlLayerGemeenten == null) {
+          kmlLayerGemeenten = new google.maps.KmlLayer({
+            url: 'https://www.dropbox.com/s/mp8gsfalguj1mtf/gemeenten.kml?dl=1'
+          });
+        }
+        currentActiveCtaLayer = "Gemeenten";
+        kmlLayerGemeenten.setMap(googleMap);
       }
 
       function convertGemeenteToCoords() {
@@ -135,9 +188,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         }
       }
 
-      //window.onload = loadScript;
-
-      google.maps.event.addDomListener(window, 'load', initialize);
+      //google.maps.event.addDomListener(window, 'load', initialize);
     </script>
 </head>
 <style>
