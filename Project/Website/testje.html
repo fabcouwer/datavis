@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH5IVSW7cKqUUoCyG_jbEXvpx4hyBo0Zc">
+    </script>
+    <input type="file" id="files" name="files[]" multiple />
+    <output id="list"></output>
+
+    <script type="text/javascript">
+
+    function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                  '</li>');
+    }
+    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    
+
+      google.maps.Polygon.prototype.Contains = function(point) {
+        // ray casting algorithm http://rosettacode.org/wiki/Ray-casting_algorithm
+        var crossings = 0,
+            path = this.getPath();
+
+        // for each edge
+        for (var i=0; i < path.getLength(); i++) {
+            var a = path.getAt(i),
+                j = i + 1;
+            if (j >= path.getLength()) {
+                j = 0;
+            }
+            var b = path.getAt(j);
+            if (rayCrossesSegment(point, a, b)) {
+                crossings++;
+            }
+        }
+
+        // odd number of crossings?
+        return (crossings % 2 == 1);
+
+        function rayCrossesSegment(point, a, b) {
+            var px = point.lng(),
+                py = point.lat(),
+                ax = a.lng(),
+                ay = a.lat(),
+                bx = b.lng(),
+                by = b.lat();
+            if (ay > by) {
+                ax = b.lng();
+                ay = b.lat();
+                bx = a.lng();
+                by = a.lat();
+            }
+            // alter longitude to cater for 180 degree crossings
+            if (px < 0) { px += 360 };
+            if (ax < 0) { ax += 360 };
+            if (bx < 0) { bx += 360 };
+
+            if (py == ay || py == by) py += 0.00000001;
+            if ((py > by || py < ay) || (px > Math.max(ax, bx))) return false;
+            if (px < Math.min(ax, bx)) return true;
+
+            var red = (ax != bx) ? ((by - ay) / (bx - ax)) : Infinity;
+            var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
+            return (blue >= red);
+
+        }
+
+     };
+
+    //Read provinces
+    function handleFileSelect(evt) {
+      var files = evt.target.files; // FileList object
+
+      var provincesFile;
+      var longlatFile;
+      provincesFile = files[1];
+      longlatFile = files[0];
+
+      var reader = new FileReader();
+
+      reader.onload = function(e){
+        var provincesText = reader.result;
+        var splitText = provincesText.split("\n")
+
+        var longitude;
+        var latitude;
+        var splitWords;
+
+        //Make a polygon for every province 
+        //Polygondata contains 12 objects with a polygon and a name 
+        var polygondata = [];
+        var currentArray;
+        var currentResultObject;
+
+        for(var i = 0; i < splitText.length; i++){
+          splitWords = splitText[i].split(",");
+          currentArray = [];
+          currentResultObject = {};
+          //First one is long, second one is lat
+          //Extract points until we have just 1 value left
+          for(var j = 0; j < splitWords.length - 1; j=j+2){
+            longitude = splitWords[j];
+            latitude = splitWords[j+1];
+            var point = new google.maps.LatLng(latitude, longitude);
+            currentArray.push(point);
+          }
+
+          currentResultObject.polygon = new google.maps.Polygon(currentArray);
+          currentResultObject.name = splitWords[splitWords.length - 1];
+
+          polygondata.push(currentResultObject);
+
+        }
+        console.log(polygondata);
+        assignProvincesToIDs(longlatfile,polygondata);
+
+      }
+
+      reader.readAsText(provincesFile);
+      
+
+
+
+    }
+
+    function assignProvincesToIDs(fileToRead, provincesPolygons) {
+      var reader2 = new FileReader();
+
+      reader2.onload = function(e){
+        var longlatText = reader2.result;
+        //TODO dit doe ik een andere keer want ik ga nu naar huis om computerspelletjes te spelen doei
+      }
+
+      reader2.readAsText(fileToRead);
+    }
+  
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+     //Read provinces
+     //Read points
+     //For every point, check each province
+
+     var point;
+     var polygon;
+
+
+
+
+    </script>
+  </head>
+  <body>
+<div id="map-canvas"></div>
+  </body>
+</html>

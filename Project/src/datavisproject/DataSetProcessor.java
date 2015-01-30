@@ -1,7 +1,10 @@
 package datavisproject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -14,11 +17,14 @@ public class DataSetProcessor {
 	public static String fileName3 = "C:\\Users\\F\\Downloads\\gemeenten.csv";
 	public static HashMap<String, PTStop> busstops;
 
+	// public static ArrayList<String> longlats;
+
 	public static void main(String[] args) {
 		busstops = new HashMap<String, PTStop>();
+		// Read
 		readPTStops();
 		readRoutesAtStop();
-		setProvinces();
+		// setProvinces();
 	}
 
 	// Parse stops.csv into PTStop objects
@@ -26,12 +32,14 @@ public class DataSetProcessor {
 		// Read file
 		BufferedReader br = null;
 		String line = "";
+		// longlats = new ArrayList<String>();
 		try {
 			String id;
 			String name;
 			String town;
 			String latitude;
 			String longitude;
+			// String longlat;
 			Scanner sc;
 			int count = 0;
 
@@ -75,16 +83,33 @@ public class DataSetProcessor {
 								longitude);
 						busstops.put(id, ptstop);
 						// System.out.println(ptstop.toString());
+
+						// longlat = id + "," + latitude + "," + longitude;
+						// longlats.add(longlat);
 					} else {
 						// System.out.println("Omitted this entry.");
 						count++;
 					}
 					sc.close();
+
 				}
 			}
 			br.close();
 			System.out.println("Reading stops - done.");
 			System.out.println("Number of lines omitted: " + count + ".");
+
+			// Output points as (id, lat, long) to check for province
+			// Write longlats to a file
+			/*
+			 * FileWriter fileWriter = new FileWriter(
+			 * "C:\\Users\\F\\Downloads\\longlat.txt"); BufferedWriter
+			 * bufferedWriter = new BufferedWriter(fileWriter);
+			 * bufferedWriter.write("id,latitude,longitude");
+			 * bufferedWriter.newLine(); for (String s : longlats) {
+			 * bufferedWriter.write(s); bufferedWriter.newLine(); }
+			 * bufferedWriter.flush(); bufferedWriter.close();
+			 */
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -121,38 +146,22 @@ public class DataSetProcessor {
 		}
 	}
 
-	private static void setProvinces() {
-		System.out.println("There are " + busstops.size()
-				+ " distinct bus stops.");
-		int count = 0;
-		HashMap<String, String> townProvince = new HashMap<String, String>();
-		// Create town-province hashmap
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(fileName3));
-			String line = br.readLine();
-			while ((line = br.readLine()) != null) {
-				String[] splitLine = line.split(";");
-				townProvince.put(splitLine[0], splitLine[3]);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		// Add province to every PTStop
-		PTStop current;
-		String province;
-		for(Map.Entry<String, PTStop> entry : busstops.entrySet()){
-			current = entry.getValue();
-			province = townProvince.get(current.getTown());
-			if(province != null){
-			entry.getValue().setProvince(province);
-			}
-			else{
-				System.out.println(current.getTown());
-				count++;
-			}
-		}
-		System.out.println("Final count: " + count);
-	}
+	/*
+	 * private static void setProvinces() { System.out.println("There are " +
+	 * busstops.size() + " distinct bus stops."); int count = 0; HashMap<String,
+	 * String> townProvince = new HashMap<String, String>(); // Create
+	 * town-province hashmap try { BufferedReader br = new BufferedReader(new
+	 * FileReader(fileName3)); String line = br.readLine(); while ((line =
+	 * br.readLine()) != null) { String[] splitLine = line.split(";");
+	 * townProvince.put(splitLine[0], splitLine[3]); }
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); }
+	 * 
+	 * // Add province to every PTStop PTStop current; String province;
+	 * for(Map.Entry<String, PTStop> entry : busstops.entrySet()){ current =
+	 * entry.getValue(); province = townProvince.get(current.getTown());
+	 * if(province != null){ entry.getValue().setProvince(province); } else{
+	 * System.out.println(current.getTown()); count++; } }
+	 * System.out.println("Final count: " + count); }
+	 */
 }
