@@ -11,12 +11,14 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH5IVSW7cKqUUoCyG_jbEXvpx4hyBo0Zc"></script>
     <script src=jquery-2.1.1.js></script>
     <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
+    <script src=jquery.csv-0.71.js></script>
     <script type="text/javascript">
         var geoXml = null;
         var geoXmlDoc = null;
         var stops = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274]];
         var gemeente = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274],[52.011826, 4.541892]];
         var gemeenteCoords = [];
+        var provincieCoords = [];
         var markers = [];
         var googleMap;
         var infoWindow;
@@ -26,33 +28,37 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         var kmlLayerGemeenten;
         var currentActiveCtaLayer;
 
-        var provincieFileName = "File:///C:/Users/Marijn/Documents/datavis/Project/Website/testPronvincies.txt";
-        function readTextFile(file)
-        {
-            var rawFile = new XMLHttpRequest();
-            rawFile.open("GET", file, false);
-            rawFile.onreadystatechange = function ()
-            {
-                if(rawFile.readyState === 4)
-                {
-                    if(rawFile.status === 200 || rawFile.status == 0)
-                    {
-                        var allText = rawFile.responseText;
-                        processText(allText);
-                    }
-                }
-            }
-            rawFile.send(null);
+        var provincieFileName = "testPronvincies.csv";
+        function readData(fileName) {
+          $(document).ready(function() {
+              $.ajax({
+                  type: "GET",
+                  url: fileName,
+                  dataType: "text",
+                  success: function(data) {processData(data);}
+               });
+          });
         }
-        function processText(text) {
-          var splitted = text.split(",");
-          console.log(splitted);
+
+        // Process data from resultgeneral into dropdown
+        function processData(allText) {
+            var parsedInput = $.csv.toArrays(allText);
+            console.log(parsedInput);
+            console.log(parsedInput.length);
+            for(i=0;i<parsedInput.length;i++) {
+              var prov = parsedInput[i];
+              console.log(prov);
+              for(j=0;j<prov.lenght;j+=2) {
+                var temp = new google.maps.LatLng(prov[j], prov[j+1]);
+                provincieCoords.push(temp);
+              }
+            }
+            console.log(provincieCoords);
         }
 
         //var map;
       function initialize() {
-        readTextFile(provincieFileName);
-        //readData(gemeenteFileName);
+        readData(provincieFileName);
 
 
         var mapOptions = {
