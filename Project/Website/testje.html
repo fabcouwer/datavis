@@ -5,7 +5,7 @@
       html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
     </style>
     <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH5IVSW7cKqUUoCyG_jbEXvpx4hyBo0Zc">
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9v7UU2CyYBO9YJw-rJU4qbEqfM51hqxA">
     </script>
     <input type="file" id="files" name="files[]" multiple />
     <output id="list"></output>
@@ -33,6 +33,7 @@
         // ray casting algorithm http://rosettacode.org/wiki/Ray-casting_algorithm
         var crossings = 0,
             path = this.getPath();
+            console.log(path);
 
         // for each edge
         for (var i=0; i < path.getLength(); i++) {
@@ -125,7 +126,7 @@
 
         }
         console.log(polygondata);
-        assignProvincesToIDs(longlatfile,polygondata);
+        assignProvincesToIDs(longlatFile,polygondata);
 
       }
 
@@ -138,10 +139,30 @@
 
     function assignProvincesToIDs(fileToRead, provincesPolygons) {
       var reader2 = new FileReader();
-
       reader2.onload = function(e){
         var longlatText = reader2.result;
-        //TODO dit doe ik een andere keer want ik ga nu naar huis om computerspelletjes te spelen doei
+        var resultString = "";
+
+        var longlatSplitLines = longlatText.split("\n");
+
+        //Skip the first line
+        //Read every point and assign it a province by checking if it fits in polygons
+        var splitWords;
+        var currentPoint;
+        var done;
+        var j;
+        for(var i = 1; i < longlatSplitLines.length - 50000; i++){
+          splitWords = longlatSplitLines[i].split(",");
+          currentPoint = new google.maps.LatLng(parseFloat(splitWords[1]),parseFloat(splitWords[2]));
+          done = false;
+          j = 0;
+          while(!done && j < 12){
+            if(provincesPolygons[j].polygon.Contains(currentPoint)){
+              console.log(currentPoint + " is in " + provincesPolygons[j].name);
+              done = true;
+            }
+          }
+        }
       }
 
       reader2.readAsText(fileToRead);
