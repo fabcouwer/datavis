@@ -24,10 +24,8 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         var infoWindow;
         var provinciePolygons = [];
         var gemeentePolygons = [];
-        var busStoptriangle;
-        var kmlLayerProvincies;
-        var kmlLayerGemeenten;
-        var currentActiveCtaLayer;
+        var currentActivePolygons;
+        var markersVisible = true;
 
         var provincieFileName = "pronvincies.csv";
         var gemeenteFileName = "gemeenten.csv";
@@ -49,24 +47,24 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             for(i=0;i<parsedInput.length;i++) {
               var coords = [];
               var row = parsedInput[i];
-              console.log(row);
               if(provincieBool) {
                 for(j=0;j<row.length-1;j+=2) {
                   var temp = new google.maps.LatLng(row[j+1], row[j]);
                   coords.push(temp);
                 }
+                createPolygons(coords, provincieBool, i, null, row[row.length-1]);
               }
               else {
                 for(j=0;j<row.length-2;j+=2) {
                   var temp = new google.maps.LatLng(row[j+1], row[j]);
                   coords.push(temp);
                 }
+                createPolygons(coords, provincieBool, i, row[row.length-1], row[row.length-2]);
               }
-              createPolygons(coords, provincieBool);
             }
         }
 
-      function createPolygons(data, provincieBool) {
+      function createPolygons(data, provincieBool, i, gemeente, provincie) {
         // Construct the polygon.
         var polygon = new google.maps.Polygon({
           paths: data,
@@ -74,10 +72,16 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           strokeOpacity: 0.8,
           strokeWeight: 2,
           fillColor: '#FF0000',
-          fillOpacity: 0.35
+          fillOpacity: 0.35,
+          index: i,
+          gemeente: gemeente,
+          provincie: provincie
         });
-        polygon.setMap(googleMap);
-        google.maps.event.addListener(polygon, 'click', showArrays);
+        google.maps.event.addListener(polygon, 'click', function () {
+          console.log(this.index);
+          console.log(this.gemeente);
+          console.log(this.provincie);
+        });
         google.maps.event.addListener(polygon, 'mouseover', function () {
           this.setOptions({
             strokeColor: '#000000',
@@ -85,7 +89,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             strokeWeight: 2,
             fillColor: '#000000',
             fillOpacity: 0.35
-           })
+           });
         });
         google.maps.event.addListener(polygon,"mouseout",function(){
           this.setOptions({
@@ -97,9 +101,11 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           });
         });
         if(provincieBool) {
+          polygon.setMap(googleMap);
           provinciePolygons.push(polygon);
         }
         else {
+          polygon.setMap(null);
           gemeentePolygons.push(polygon);
         }
       }
@@ -112,9 +118,9 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         };
         googleMap = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
-        //readData(provincieFileName, true);
+        readData(provincieFileName, true);
         readData(gemeenteFileName, false);
-        console.log(provinciePolygons);
+        currentActivePolygons = "Provincies";
         initializeMarkers();
         //google.maps.event.addListener(busStoptriangle, 'click', showArrays);
 
@@ -129,21 +135,6 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             console.log(text);
         });*/
       }
-
-      function createPolygon() {
-        // Construct the polygon.
-          busStoptriangle = new google.maps.Polygon({
-            paths: gemeenteCoords,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35
-          });
-
-          busStoptriangle.setMap(googleMap);
-      }
-
       
       function convertGemeenteToCoords() {
         for(i=0;i<gemeente.length;i++) {
@@ -177,6 +168,28 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
       infoWindow.open(googleMap);
     }
 
+    function switchPolygonViewing (polygonMode) {
+      if(polygonMode == currentActivePolygons) {
+        // Do nothing
+      }
+      else if(polygonMode == "Provincies") {
+        showProvinciePolygons();
+        hideGemeentePolygons();
+        currentActivePolygons = "Provincies";
+      }
+      else if(polygonMode == "Gemeenten") {
+        hideProvinciePolygons();
+        showGemeentePolygons();
+        currentActivePolygons = "Gemeenten";
+      }
+      else {
+        // None has been selected, hide all
+        hideProvinciePolygons();
+        hideGemeentePolygons();
+        currentActivePolygons = "None";
+      }
+    }
+
     function showProvinciePolygons() {
       for(i=0;i<provinciePolygons.length;i++) {
             provinciePolygons[i].setMap(googleMap);
@@ -184,8 +197,8 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
     }
 
     function showGemeentePolygons() {
-      for(i=0;i<provinciePolygons.length;i++) {
-        provinciePolygons[i].setMap(googleMap);
+      for(i=0;i<gemeentePolygons.length;i++) {
+          gemeentePolygons[i].setMap(googleMap);
       }
     }
 
@@ -225,12 +238,33 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         }
       }
 
+      function switchVisibilityMarkers() {
+        if(markersVisible) {
+          hideMarkers();
+          markersVisible = false;
+        }
+        else {
+          showMarkers();
+          markersVisible = true;
+        }
+      }
+
+      // On click for the dropdown
+      $(function(){
+        $("#menuTime").on('click', 'li a', function() {
+            $("#dropdownMenu2").val($(this).text());
+            $("#dropdownMenu2").html($(this).text() + ' <span class="caret"></span>');
+            console.log($(this).text());
+            switchPolygonViewing($(this).text());
+        });
+    });
+
       //google.maps.event.addDomListener(window, 'load', initialize);
     </script>
 </head>
 <style>
 #map-canvas {
-    height: 800px;
+    height: 600px;
     width: 1100px; 
     margin-left: auto; 
     margin-right: auto; 
@@ -239,6 +273,9 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
 .jumbotronPadding{
     padding: 30px 15px;
     margin-top: 80px;
+}
+.navbar-nav li input {
+ line-height: 20px;
 }
 </style>
 
@@ -258,8 +295,35 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
                         <span class="icon-bar"></span>
                     </button>
                 </div>
-                    <div id="navbar" class="navbar-collapse collapse">
-                    </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                  <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <div>
+                        <p class="navbar-text">Datasets:</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="btn-group navbar-btn">
+                          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+                          Provincies
+                          <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
+                              <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
+                              <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
+                              <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
+                          </ul>
+                        </div>
+                    </li>
+                    <li>
+                      <div class="checkbox navbar-text">
+                          <label class="navbar-link" for="filterUnfulfilled">
+                              <input class="autosubmit" id="filterUnfulfilled" value="true" type="checkbox" onchange="switchVisibilityMarkers()" checked>
+                              Show/Hide markers
+                          </label>
+                      </div>
+                    </li>
+                  </ul>
                 </div>
         </nav>
 
