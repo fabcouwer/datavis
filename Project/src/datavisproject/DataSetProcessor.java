@@ -14,7 +14,7 @@ public class DataSetProcessor {
 
 	public static String fileName = "C:\\Users\\F\\Downloads\\stops.csv";
 	public static String fileName2 = "C:\\Users\\F\\Downloads\\routes-at-stop.csv";
-	public static String fileName3 = "C:\\Users\\F\\Downloads\\gemeenten.csv";
+	//public static String fileName3 = "C:\\Users\\F\\Downloads\\gemeenten.csv";
 	public static HashMap<String, PTStop> busstops;
 
 	// public static ArrayList<String> longlats;

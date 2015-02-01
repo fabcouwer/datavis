@@ -22,6 +22,7 @@ public class PTStop {
 		this.id = id;
 		this.name = name;
 		this.town = town;
+		this.province = "";
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.operators = new ArrayList<String>();
