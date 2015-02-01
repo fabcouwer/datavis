@@ -27,7 +27,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         var currentActivePolygons;
         var markersVisible = true;
 
-        var provincieFileName = "pronvincies.csv";
+        var provincieFileName = "provinciesConverted.csv";
         var gemeenteFileName = "gemeenten.csv";
         // last nine columns of gemeenteFile do not hold long/lat coords
         function readData(fileName, provincieBool) {
@@ -44,23 +44,74 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         // Process data from resultgeneral into dropdown
         function processData(allText, provincieBool) {
             var parsedInput = $.csv.toArrays(allText);
-            for(i=0;i<parsedInput.length;i++) {
-              var coords = [];
-              var row = parsedInput[i];
+            var coords = [];
+            var output = [[]];
+            var firstRow = parsedInput[0];
+            var previousProvincie = "";
+            var previousGemeente = "";
+            var row;
+            if(provincieBool) {
+              previousProvincie = firstRow[firstRow.length-1];
+              for(j=0;j<firstRow.length-1;j+=2) {
+                var temp = new google.maps.LatLng(firstRow[j+1], firstRow[j]);
+                coords.push(temp);
+              }
+              output.push(coords);
+              coords = [];
+            }
+            else {
+              previousProvincie = firstRow[firstRow.length-2];
+              previousGemeente = firstRow[firstRow.length-1];
+              for(j=0;j<firstRow.length-2;j+=2) {
+                var temp = new google.maps.LatLng(firstRow[j+1], firstRow[j]);
+                coords.push(temp);
+              }
+              output.push(coords);
+              coords = [];
+            }
+            for(i=1;i<parsedInput.length;i++) {
+              row = parsedInput[i];
               if(provincieBool) {
+                if(previousProvincie == row[row.length-1]) {
+                  // Do nothing because the provincies are still the same
+                  console.log("previousProvincie: " + previousProvincie);
+                }
+                else {
+                  createPolygons(output, provincieBool, i, null, previousProvincie);
+                  output = [[]];
+                  previousProvincie = row[row.length-1];
+                }
                 for(j=0;j<row.length-1;j+=2) {
                   var temp = new google.maps.LatLng(row[j+1], row[j]);
                   coords.push(temp);
                 }
-                createPolygons(coords, provincieBool, i, null, row[row.length-1]);
+                output.push(coords);
+                coords = [];
               }
               else {
+                if(previousGemeente == row[row.length-1] && previousProvincie == row[row.length-2]) {
+                  console.log("previousGemeente: " + previousGemeente);
+                  // Do nothing because it is still the same gemeente.
+                }
+                else {
+                  createPolygons(output, provincieBool, i, previousGemeente, previousProvincie);
+                  var output = [[]];
+                  previousProvincie = row[row.length-2];
+                  previousGemeente = row[row.length-1];
+                }
                 for(j=0;j<row.length-2;j+=2) {
                   var temp = new google.maps.LatLng(row[j+1], row[j]);
                   coords.push(temp);
                 }
-                createPolygons(coords, provincieBool, i, row[row.length-1], row[row.length-2]);
+                output.push(coords);
+                coords = [];
               }
+            }
+            if(provincieBool) {
+              createPolygons(output, provincieBool, i, null, row[row.length-1]);
+            }
+            else {
+              createPolygons(output, provincieBool, i, row[row.length-1], row[row.length-2]);
             }
         }
 
@@ -81,6 +132,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           console.log(this.index);
           console.log(this.gemeente);
           console.log(this.provincie);
+          fillPopup(this);
         });
         google.maps.event.addListener(polygon, 'mouseover', function () {
           this.setOptions({
@@ -89,7 +141,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             strokeWeight: 2,
             fillColor: '#000000',
             fillOpacity: 0.35
-           });
+           });          
         });
         google.maps.event.addListener(polygon,"mouseout",function(){
           this.setOptions({
@@ -122,18 +174,9 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         readData(gemeenteFileName, false);
         currentActivePolygons = "Provincies";
         initializeMarkers();
-        //google.maps.event.addListener(busStoptriangle, 'click', showArrays);
-
         infoWindow = new google.maps.InfoWindow();
 
         showMarkers();
-
-        //showProvincies();
-
-/*        google.maps.event.addListener(kmlLayerProvincies, 'click', function(kmlEvent){
-            var text = kmlEvent.featureData.description;
-            console.log(text);
-        });*/
       }
       
       function convertGemeenteToCoords() {
@@ -144,26 +187,15 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
       }
 
       /** @this {google.maps.Polygon} */
-    function showArrays(event) {
-
-      // Since this polygon has only one path, we can call getPath()
-      // to return the MVCArray of LatLngs.
-      var vertices = this.getPath();
-
-      var contentString = '<b>Bermuda Triangle polygon</b><br>' +
-          'Clicked location: <br>' + event.latLng.lat() + ',' + event.latLng.lng() +
-          '<br>';
-
-      // Iterate over the vertices.
-      for (var i =0; i < vertices.getLength(); i++) {
-        var xy = vertices.getAt(i);
-        contentString += '<br>' + 'Coordinate ' + i + ':<br>' + xy.lat() + ',' +
-            xy.lng();
-      }
-
+    function fillPopup(polygon) {
       // Replace the info window's content and position.
-      infoWindow.setContent("Bla bla");
-      infoWindow.setPosition(event.latLng);
+      if(polygon.gemeente == null) {
+        infoWindow.setContent("Provincie: " + polygon.provincie);
+      }
+      else {
+        infoWindow.setContent("Provincie: " + polygon.provincie + "\n" + "Gemeente: " + polygon.gemeente);
+      }
+      infoWindow.setPosition(this.latLng);
 
       infoWindow.open(googleMap);
     }
