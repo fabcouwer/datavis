@@ -18,104 +18,133 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         var stops = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274]];
         var gemeente = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274],[52.011826, 4.541892]];
         var gemeenteCoords = [];
-        var provincieCoords = [];
+        //var provincieCoords = [];
         var markers = [];
         var googleMap;
         var infoWindow;
-        var polygons = [];
+        var provinciePolygons = [];
+        var gemeentePolygons = [];
         var busStoptriangle;
         var kmlLayerProvincies;
         var kmlLayerGemeenten;
         var currentActiveCtaLayer;
 
-        var provincieFileName = "testPronvincies.csv";
-        function readData(fileName) {
+        var provincieFileName = "pronvincies.csv";
+        var gemeenteFileName = "gemeenten.csv";
+        // last nine columns of gemeenteFile do not hold long/lat coords
+        function readData(fileName, provincieBool) {
           $(document).ready(function() {
               $.ajax({
                   type: "GET",
                   url: fileName,
                   dataType: "text",
-                  success: function(data) {processData(data);}
+                  success: function(data) {processData(data, provincieBool);}
                });
           });
         }
 
         // Process data from resultgeneral into dropdown
-        function processData(allText) {
+        function processData(allText, provincieBool) {
             var parsedInput = $.csv.toArrays(allText);
-            console.log(parsedInput);
-            console.log(parsedInput.length);
             for(i=0;i<parsedInput.length;i++) {
-              var prov = parsedInput[i];
-              console.log(prov);
-              for(j=0;j<prov.lenght;j+=2) {
-                var temp = new google.maps.LatLng(prov[j], prov[j+1]);
-                provincieCoords.push(temp);
+              var coords = [];
+              var row = parsedInput[i];
+              console.log(row);
+              if(provincieBool) {
+                for(j=0;j<row.length-1;j+=2) {
+                  var temp = new google.maps.LatLng(row[j+1], row[j]);
+                  coords.push(temp);
+                }
               }
+              else {
+                for(j=0;j<row.length-2;j+=2) {
+                  var temp = new google.maps.LatLng(row[j+1], row[j]);
+                  coords.push(temp);
+                }
+              }
+              createPolygons(coords, provincieBool);
             }
-            console.log(provincieCoords);
         }
+
+      function createPolygons(data, provincieBool) {
+        // Construct the polygon.
+        var polygon = new google.maps.Polygon({
+          paths: data,
+          strokeColor: '#FF0000',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#FF0000',
+          fillOpacity: 0.35
+        });
+        polygon.setMap(googleMap);
+        google.maps.event.addListener(polygon, 'click', showArrays);
+        google.maps.event.addListener(polygon, 'mouseover', function () {
+          this.setOptions({
+            strokeColor: '#000000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#000000',
+            fillOpacity: 0.35
+           })
+        });
+        google.maps.event.addListener(polygon,"mouseout",function(){
+          this.setOptions({
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35
+          });
+        });
+        if(provincieBool) {
+          provinciePolygons.push(polygon);
+        }
+        else {
+          gemeentePolygons.push(polygon);
+        }
+      }
 
         //var map;
       function initialize() {
-        readData(provincieFileName);
-
-
         var mapOptions = {
           center: { lat: 52.011826, lng: 4.541892},
           zoom: 8
         };
         googleMap = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
-
+        //readData(provincieFileName, true);
+        readData(gemeenteFileName, false);
+        console.log(provinciePolygons);
         initializeMarkers();
-        convertGemeenteToCoords();
-        createPolygon();
-        google.maps.event.addListener(busStoptriangle, 'click', showArrays);
-
+        //google.maps.event.addListener(busStoptriangle, 'click', showArrays);
 
         infoWindow = new google.maps.InfoWindow();
 
         showMarkers();
 
-        showProvincies();
+        //showProvincies();
 
-        google.maps.event.addListener(kmlLayerProvincies, 'click', function(kmlEvent){
+/*        google.maps.event.addListener(kmlLayerProvincies, 'click', function(kmlEvent){
             var text = kmlEvent.featureData.description;
             console.log(text);
-        });
+        });*/
       }
 
-      function hideKMLLayer() {
-        if(currentActiveCtaLayer == "Provincies") {
-          kmlLayerProvincies.setMap(null);
-        }
-        else if(currentActiveCtaLayer == "Gemeenten") {
-          kmlLayerGemeenten.setMap(null);
-        }
-        currentActiveCtaLayer = "";
-      }
-
-      function showProvincies() {
-        if(kmlLayerProvincies == null) {
-          kmlLayerProvincies = new google.maps.KmlLayer({
-            url: 'https://www.dropbox.com/s/buzo995dfi5z0xa/pronvincies.kml?dl=1'
+      function createPolygon() {
+        // Construct the polygon.
+          busStoptriangle = new google.maps.Polygon({
+            paths: gemeenteCoords,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35
           });
-        }
-        currentActiveCtaLayer = "Provincies";
-        kmlLayerProvincies.setMap(googleMap);
+
+          busStoptriangle.setMap(googleMap);
       }
 
-      function showGemeenten() {
-        if(kmlLayerGemeenten == null) {
-          kmlLayerGemeenten = new google.maps.KmlLayer({
-            url: 'https://www.dropbox.com/s/mp8gsfalguj1mtf/gemeenten.kml?dl=1'
-          });
-        }
-        currentActiveCtaLayer = "Gemeenten";
-        kmlLayerGemeenten.setMap(googleMap);
-      }
-
+      
       function convertGemeenteToCoords() {
         for(i=0;i<gemeente.length;i++) {
             var temp = new google.maps.LatLng(gemeente[i][0], gemeente[i][1]);
@@ -142,31 +171,33 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
       }
 
       // Replace the info window's content and position.
-      infoWindow.setContent(contentString);
+      infoWindow.setContent("Bla bla");
       infoWindow.setPosition(event.latLng);
 
       infoWindow.open(googleMap);
     }
 
+    function showProvinciePolygons() {
+      for(i=0;i<provinciePolygons.length;i++) {
+            provinciePolygons[i].setMap(googleMap);
+      }
+    }
 
-      function createPolygon() {
-        // Construct the polygon.
-          busStoptriangle = new google.maps.Polygon({
-            paths: gemeenteCoords,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35
-          });
+    function showGemeentePolygons() {
+      for(i=0;i<provinciePolygons.length;i++) {
+        provinciePolygons[i].setMap(googleMap);
+      }
+    }
 
-          busStoptriangle.setMap(googleMap);
-          polygons.push(busStoptriangle);
+      function hideProvinciePolygons() {
+        for(i=0;i<provinciePolygons.length;i++) {
+            provinciePolygons[i].setMap(null);
+        }
       }
 
-      function hidePolygons() {
-        for(i=0;i<polygons.length;i++) {
-            polygons[i].setMap(null);
+      function hideGemeentePolygons() {
+        for(i=0;i<gemeentePolygons.length;i++) {
+          gemeentePolygons[i].setMap(null);
         }
       }
 
