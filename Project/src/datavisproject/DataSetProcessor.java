@@ -1,31 +1,37 @@
 package datavisproject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
-//Processes the datasets from OpenOV into a format usable in our visualization
+//Processes the datasets from OpenOV and our own province/municipality dataset into a format usable in our visualization
 public class DataSetProcessor {
 
-	public static String fileName = "C:\\Users\\F\\Downloads\\stops.csv";
-	public static String fileName2 = "C:\\Users\\F\\Downloads\\routes-at-stop.csv";
-	// public static String fileName3 =
-	// "C:\\Users\\F\\Downloads\\gemeenten.csv";
-	public static HashMap<String, PTStop> busstops;
+	static String prefix = "C:\\Users\\F\\Dropbox\\Studie\\Data Visualization\\Project\\datasets\\";
+
+	private static String stopsFile = prefix + "stops.csv";
+	private static String routesAtStopFile = prefix + "routes-at-stop.csv";
+	private static String muniProviFile = prefix + "ids_mp.csv";
+	private static String outputFile = prefix + "output.csv";
+	private static HashMap<String, PTStop> busstops;
 
 	// public static ArrayList<String> longlats;
 
 	public static void main(String[] args) {
 		busstops = new HashMap<String, PTStop>();
-		// Read
 		readPTStops();
 		readRoutesAtStop();
-		// setProvinces();
+		readMandP();
+		outputToFile();
 	}
 
 	// Parse stops.csv into PTStop objects
-	public static void readPTStops() {
+	private static void readPTStops() {
 		// Read file
 		BufferedReader br = null;
 		String line = "";
@@ -36,11 +42,11 @@ public class DataSetProcessor {
 			String town;
 			String latitude;
 			String longitude;
-			// String longlat;
+			String operator;
 			Scanner sc;
 			int count = 0;
 
-			br = new BufferedReader(new FileReader(fileName));
+			br = new BufferedReader(new FileReader(stopsFile));
 			br.readLine();
 			while ((line = br.readLine()) != null) {
 				// If line ends with f, it can be ignored
@@ -51,7 +57,7 @@ public class DataSetProcessor {
 					sc.useDelimiter(",");
 					// Scan id, skip operator_id
 					id = sc.next();
-					sc.next();
+					operator = sc.next().split(":")[0];
 
 					// Read name: if it is in quotes there is at least one comma
 					// In that case, keep adding parts until we find the end
@@ -78,11 +84,8 @@ public class DataSetProcessor {
 
 						PTStop ptstop = new PTStop(id, name, town, latitude,
 								longitude);
+						ptstop.setOperator(operator);
 						busstops.put(id, ptstop);
-						// System.out.println(ptstop.toString());
-
-						// longlat = id + "," + latitude + "," + longitude;
-						// longlats.add(longlat);
 					} else {
 						// System.out.println("Omitted this entry.");
 						count++;
@@ -123,7 +126,7 @@ public class DataSetProcessor {
 		String[] routes;
 		try {
 
-			br = new BufferedReader(new FileReader(fileName2));
+			br = new BufferedReader(new FileReader(routesAtStopFile));
 			br.readLine();
 			while ((line = br.readLine()) != null) {
 				String[] splitLine = line.split(",");
@@ -143,22 +146,66 @@ public class DataSetProcessor {
 		}
 	}
 
-	/*
-	 * private static void setProvinces() { System.out.println("There are " +
-	 * busstops.size() + " distinct bus stops."); int count = 0; HashMap<String,
-	 * String> townProvince = new HashMap<String, String>(); // Create
-	 * town-province hashmap try { BufferedReader br = new BufferedReader(new
-	 * FileReader(fileName3)); String line = br.readLine(); while ((line =
-	 * br.readLine()) != null) { String[] splitLine = line.split(";");
-	 * townProvince.put(splitLine[0], splitLine[3]); }
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); }
-	 * 
-	 * // Add province to every PTStop PTStop current; String province;
-	 * for(Map.Entry<String, PTStop> entry : busstops.entrySet()){ current =
-	 * entry.getValue(); province = townProvince.get(current.getTown());
-	 * if(province != null){ entry.getValue().setProvince(province); } else{
-	 * System.out.println(current.getTown()); count++; } }
-	 * System.out.println("Final count: " + count); }
-	 */
+	// Read municipalities and provinces from our own file
+	private static void readMandP() {
+
+		try {
+			String line;
+			BufferedReader br;
+			br = new BufferedReader(new FileReader(muniProviFile));
+			br.readLine();
+			String[] splitLine;
+			PTStop currentStop;
+			while ((line = br.readLine()) != null) {
+				splitLine = line.split(",");
+				currentStop = busstops.get(splitLine[0]);
+				currentStop.setMunicipality(splitLine[3]);
+				currentStop.setProvince(splitLine[4]);
+			}
+			br.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("Reading municipalities and provinces - done.");
+
+	}
+
+	private static void outputToFile() {
+		try {
+			File file = new File(outputFile);
+
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			bw.write("id,operator,name,latitude,longitude,town,municipality,province,routes\n");
+			String line;
+			PTStop current;
+			// Output all points for which we found the province and
+			// municipality
+			for (Entry<String, PTStop> entry : busstops.entrySet()) {
+				current = entry.getValue();
+				if (!current.getMunicipality().equals("")) {
+					line = current.getId() + "," + current.getOperator() + ","
+							+ current.getName() + "," + current.getLatitude()
+							+ "," + current.getLongitude() + ","
+							+ current.getTown() + ","
+							+ current.getMunicipality() + ","
+							+ current.getProvince() + ","
+							+ current.routesToString() + "\n";
+					bw.write(line);
+				}
+			}
+
+			bw.close();
+			System.out.println("Successfully wrote output.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -9,11 +9,12 @@ public class PTStop {
 	private String id;
 	private String name;
 	private String town;
+	private String municipality;
 	private String province;
 	private String latitude;
 	private String longitude;
+	private String operator;
 
-	private ArrayList<String> operators;
 	private ArrayList<String> lines;
 
 	public PTStop(String id, String name, String town, String latitude,
@@ -23,18 +24,12 @@ public class PTStop {
 		this.name = name;
 		this.town = town;
 		this.province = "";
+		this.municipality = "";
+		this.setOperator("");
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.operators = new ArrayList<String>();
 		this.lines = new ArrayList<String>();
 
-	}
-
-	// Add an operator if it is not already in the list of operators
-	public void addOperator(String operatorName) {
-		if (!operators.contains(operatorName)) {
-			operators.add(operatorName);
-		}
 	}
 
 	// Add a line if it is not already in the list of lines
@@ -95,14 +90,34 @@ public class PTStop {
 
 	public String toString() {
 		String ts = "<PTStop: Name = " + name + " | Town = " + town
-				+ " | Lat/Long = " + latitude + " / " + longitude
-				+ " | Routes : ";
-
-		for (String route : lines) {
-			ts += route + " / ";
-		}
-		ts = ts.substring(0, ts.length() - 3) + ">";
+				+ " | Municipality = " + municipality + " | Province = "
+				+ province + " | Lat/Long = " + latitude + " / " + longitude
+				+ " | Routes : " + routesToString() + ">";
 		return ts;
+	}
+
+	public String routesToString() {
+		String toReturn = "";
+		for (String route : lines) {
+			toReturn += route + "/";
+		}
+		return (toReturn.substring(0, toReturn.length() - 1));
+	}
+
+	public String getMunicipality() {
+		return municipality;
+	}
+
+	public void setMunicipality(String municipality) {
+		this.municipality = municipality;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 }
