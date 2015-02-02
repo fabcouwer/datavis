@@ -8,12 +8,14 @@ public class LatLongPoint {
 	private float longitude;
 	private String id;
 	private String province;
+	private String municipality;
 
 	public LatLongPoint(float latitude, float longitude, String id) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.id = id;
 		this.province = "";
+		this.setMunicipality("");
 	}
 
 	public float getLatitude() {
@@ -111,5 +113,13 @@ public class LatLongPoint {
 		float blue = (ax != px) ? ((py - ay) / (px - ax)) : Float.MAX_VALUE;
 		return (blue >= red);
 
+	}
+
+	public String getMunicipality() {
+		return municipality;
+	}
+
+	public void setMunicipality(String municipality) {
+		this.municipality = municipality;
 	}
 }

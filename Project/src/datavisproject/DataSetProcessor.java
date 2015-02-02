@@ -1,12 +1,8 @@
 package datavisproject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 //Processes the datasets from OpenOV into a format usable in our visualization
@@ -14,7 +10,8 @@ public class DataSetProcessor {
 
 	public static String fileName = "C:\\Users\\F\\Downloads\\stops.csv";
 	public static String fileName2 = "C:\\Users\\F\\Downloads\\routes-at-stop.csv";
-	//public static String fileName3 = "C:\\Users\\F\\Downloads\\gemeenten.csv";
+	// public static String fileName3 =
+	// "C:\\Users\\F\\Downloads\\gemeenten.csv";
 	public static HashMap<String, PTStop> busstops;
 
 	// public static ArrayList<String> longlats;
