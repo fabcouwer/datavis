@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Project</title>
+    <meta charset="utf-8">
+    <link href=bootstrap-3.1.1-dist/css/bootstrap.css rel=stylesheet media="screen">
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH5IVSW7cKqUUoCyG_jbEXvpx4hyBo0Zc"></script>
+    <script src=jquery-2.1.1.js></script>
+    <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
+    <script src=jquery.csv-0.71.js></script>
+    <script type="text/javascript">
+      // On click for the dropdown
+      $(function(){
+        $("#menuTime1").on('click', 'li a', function() {
+            $("#dropdownMenu1").val($(this).text());
+            $("#dropdownMenu1").html($(this).text() + ' <span class="caret"></span>');
+            //switchPolygonViewing($(this).text());
+        });
+      });
+      $(function(){
+        $("#menuTime2").on('click', 'li a', function() {
+            $("#dropdownMenu2").val($(this).text());
+            $("#dropdownMenu2").html($(this).text() + ' <span class="caret"></span>');
+            //switchPolygonViewing($(this).text());
+        });
+      });
+    </script>
+</head>
+<style>
+#map-canvas {
+    height: 600px;
+    width: 1100px; 
+    margin-left: auto; 
+    margin-right: auto; 
+}
+
+.jumbotronPadding{
+    padding: 30px 15px;
+    margin-top: 80px;
+}
+.navbar-nav li input {
+ line-height: 20px;
+}
+</style>
+
+<!--<div id='editor'></div>-->
+
+<body>
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+              <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand">OpenOV Visualization</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                  <ul class="nav navbar-nav">
+                    <li>
+                      <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                      <a href="Choropleth.html">Choropleths</a>
+                    </li>
+                    <li>
+                    </li>
+                  </ul>
+                </div>
+        </nav>
+
+        <div class="container col-centered">
+            <div class="jumbotron jumbotronPadding">
+                <h1>Choropleths</h1>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+          </div>
+          <div class="col-md-4">
+            <div class="btn-group">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+              Provincies
+              <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id="menuTime1" role="menu" aria-labelledby="dropdownMenu1">
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4">
+          </div>
+          <div class="col-md-4">
+            <div class="btn-group">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+              Provincies
+              <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id="menuTime2" role="menu" aria-labelledby="dropdownMenu2">
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div id="footer" style="height:50px">
+    </div>
+</body>
+</html>

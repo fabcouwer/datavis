@@ -428,32 +428,14 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
                     </button>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
-                  <ul class="nav navbar-nav navbar-right">
+                  <ul class="nav navbar-nav">
                     <li>
-                        <div>
-                        <p class="navbar-text">Datasets:</p>
-                        </div>
+                      <a href="index.html">Home</a>
                     </li>
                     <li>
-                        <div class="btn-group navbar-btn">
-                          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
-                          Provincies
-                          <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
-                              <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
-                              <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
-                              <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
-                          </ul>
-                        </div>
+                      <a href="Choropleths.html">Choropleths</a>
                     </li>
                     <li>
-                      <div class="checkbox navbar-text">
-                          <label class="navbar-link" for="filterUnfulfilled">
-                              <input class="autosubmit" id="filterUnfulfilled" value="true" type="checkbox" onchange="switchVisibilityMarkers()" checked>
-                              Show/Hide markers
-                          </label>
-                      </div>
                     </li>
                   </ul>
                 </div>
@@ -465,10 +447,33 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
                 <h4>Authors: Friso Abcouwer (4019873) & Marijn Goedegebure (4013484)</h4>
             </div>
         </div>
-        <div class="container col-centered">
-            <div class="row">
-                <div id="map-canvas"></div>
+        <div class="row">
+          <div class="col-md-8">
+          </div>
+          <div class="col-md-2">
+            <div class="btn-group">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+              Provincies
+              <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
+              </ul>
             </div>
+          </div>
+          <div class="col-md-2">
+            <div class="checkbox">
+              <label for="filterUnfulfilled">
+                  <input class="autosubmit" id="filterUnfulfilled" value="true" type="checkbox" onchange="switchVisibilityMarkers()" checked>
+                  Show/Hide markers
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div id="map-canvas"></div>
         </div>
     </div>
     <div id="footer" style="height:50px">
