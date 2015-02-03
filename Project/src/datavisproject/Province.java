@@ -45,7 +45,7 @@ public class Province {
 		for (Municipality m : municipalities) {
 			sum += m.getPopPerSquareKm();
 		}
-		return sum;
+		return sum/municipalities.size();
 	}
 
 	public int getTotalStops() {
