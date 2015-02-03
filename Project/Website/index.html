@@ -30,7 +30,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         var currentlySelectedPolygon = null;
         var markersVisible = true;
 
-        var provincieFileName = "provinciesConverted.csv";
+        var provincieFileName = "provincies.csv";
         var gemeenteFileName = "gemeenten.csv";
         var stopsFileName = "stops.csv";
         // last nine columns of gemeenteFile do not hold long/lat coords
@@ -60,19 +60,19 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           var parsedInput = $.csv.toArrays(data);
           for(i = 1; i<parsedInput.length;i++) {
             var temp = new google.maps.Marker({
-              position: new google.maps.LatLng(parsedInput[i][1],parsedInput[i][2]),
+              position: new google.maps.LatLng(parsedInput[i][4],parsedInput[i][5]),
               title: "Marker " + i
             });
             var gemeente = null;
             for(j = 0; j<gemeenteMarkers.length; j++) {
-              if(gemeenteMarkers[j].name == parsedInput[i][3]) {
+              if(gemeenteMarkers[j].name == parsedInput[i][8]) {
                 gemeente = gemeenteMarkers[j];
               }
             }
             if (gemeente == null) {
               gemeente = {
                 markers: [temp],
-                name: parsedInput[i][3]
+                name: parsedInput[i][8]
               };
               gemeenteMarkers.push(gemeente);
             }
@@ -245,7 +245,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
     function fillPopup(polygon) {
       // Replace the info window's content and position.
       if(polygon.gemeente == null) {
-        infoWindow.setContent("Provincie: " + polygon.provincie);
+        infoWindow.setContent("Provincie: " + polygon.provincie + "\n");
       }
       else {
         infoWindow.setContent("Provincie: " + polygon.provincie + "\n" + "Gemeente: " + polygon.gemeente);

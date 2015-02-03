@@ -18,6 +18,7 @@ public class DataSetProcessor {
 	private static String routesAtStopFile = prefix + "routes-at-stop.csv";
 	private static String muniProviFile = prefix + "ids_mp.csv";
 	private static String outputFile = prefix + "output.csv";
+	private static HashMap<String, Double> statistics;
 	private static HashMap<String, PTStop> busstops;
 
 	// public static ArrayList<String> longlats;
@@ -27,7 +28,26 @@ public class DataSetProcessor {
 		readPTStops();
 		readRoutesAtStop();
 		readMandP();
+		//calculateStatistics();
 		outputToFile();
+	}
+	
+	private static void calculateStatistics() {
+		// Calculate the amount of stops for each province
+		HashMap<String, Integer> stopsPerProvince = new HashMap<String, Integer>();
+
+		for(Entry<String, PTStop> entry : busstops.entrySet()) {
+		    String key = entry.getKey();
+		    PTStop value = entry.getValue();
+		    if(stopsPerProvince.containsKey(value.getProvince())) {
+		    	Integer newCount = stopsPerProvince.get(value.getProvince()) + 1;
+		    	stopsPerProvince.put(value.getProvince(), newCount);
+		    }
+		    else {
+		    	stopsPerProvince.put(value.getProvince(), 1);
+		    }
+		}
+		System.out.println("Done with statistics part 1");
 	}
 
 	// Parse stops.csv into PTStop objects
