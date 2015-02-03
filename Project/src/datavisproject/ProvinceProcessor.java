@@ -39,8 +39,6 @@ public class ProvinceProcessor {
 			String fileName) {
 		String line;
 		BufferedReader br;
-
-		String categoryName;
 		LatLongPolygon currentItem;
 		HashMap<String, ArrayList<LatLongPolygon>> itemMap = new HashMap<String, ArrayList<LatLongPolygon>>();
 
@@ -70,7 +68,6 @@ public class ProvinceProcessor {
 	// Helper method to convert a comma-separated line representing one or more
 	// polygons into an arraylist of polygons
 	public static LatLongPolygon lineIntoPolygon(String[] line) {
-		ArrayList<LatLongPolygon> result = new ArrayList<LatLongPolygon>();
 		String itemName = line[line.length - 2] + "/" + line[line.length - 1];
 		LatLongPolygon currentPolygon = new LatLongPolygon(itemName);
 

@@ -17,9 +17,11 @@ public class DataSetProcessor {
 	private static String stopsFile = prefix + "stops.csv";
 	private static String routesAtStopFile = prefix + "routes-at-stop.csv";
 	private static String muniProviFile = prefix + "ids_mp.csv";
+	private static String populationFile = prefix + "gemeenten_inwoners.csv";
 	private static String outputFile = prefix + "output.csv";
-	private static HashMap<String, Double> statistics;
 	private static HashMap<String, PTStop> busstops;
+	private static HashMap<String, Municipality> municipalities;
+	private static HashMap<String, Province> provinces;
 
 	// public static ArrayList<String> longlats;
 
@@ -28,26 +30,10 @@ public class DataSetProcessor {
 		readPTStops();
 		readRoutesAtStop();
 		readMandP();
-		//calculateStatistics();
-		outputToFile();
-	}
-	
-	private static void calculateStatistics() {
-		// Calculate the amount of stops for each province
-		HashMap<String, Integer> stopsPerProvince = new HashMap<String, Integer>();
-
-		for(Entry<String, PTStop> entry : busstops.entrySet()) {
-		    String key = entry.getKey();
-		    PTStop value = entry.getValue();
-		    if(stopsPerProvince.containsKey(value.getProvince())) {
-		    	Integer newCount = stopsPerProvince.get(value.getProvince()) + 1;
-		    	stopsPerProvince.put(value.getProvince(), newCount);
-		    }
-		    else {
-		    	stopsPerProvince.put(value.getProvince(), 1);
-		    }
-		}
-		System.out.println("Done with statistics part 1");
+		// outputStopsToFile();
+		readMunicipalities();
+		readPopulationFile();
+		outputMunicipalitiesToFile();
 	}
 
 	// Parse stops.csv into PTStop objects
@@ -86,10 +72,11 @@ public class DataSetProcessor {
 						name = name.substring(1);
 						boolean done = false;
 						while (!done) {
-							name += "," + sc.next();
-							if (name.endsWith("\""))
+							name += ":" + sc.next();
+							if (name.endsWith("\"")) {
 								name = name.substring(0, name.length() - 1);
-							done = true;
+								done = true;
+							}
 						}
 					}
 
@@ -154,7 +141,7 @@ public class DataSetProcessor {
 				if (ptstop != null) {
 					routes = splitLine[1].split(";");
 					for (int i = 0; i < routes.length; i++) {
-						ptstop.addLine(routes[i]);
+						ptstop.addRoute(routes[i]);
 					}
 					// System.out.println(ptstop.toString());
 				}
@@ -166,7 +153,7 @@ public class DataSetProcessor {
 		}
 	}
 
-	// Read municipalities and provinces from our own file
+	// Read municipalities and provinces for bus stops from our own file
 	private static void readMandP() {
 
 		try {
@@ -190,11 +177,11 @@ public class DataSetProcessor {
 
 	}
 
-	private static void outputToFile() {
+	private static void outputStopsToFile() {
 		try {
 			File file = new File(outputFile);
 
-			// if file doesnt exists, then create it
+			// if file doesn't exist, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -219,6 +206,119 @@ public class DataSetProcessor {
 							+ current.routesToString() + "\n";
 					bw.write(line);
 				}
+			}
+
+			bw.close();
+			System.out.println("Successfully wrote output.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Read municipalities and provinces population file, and add PTStops to
+	// municipalities
+	public static void readMunicipalities() {
+		municipalities = new HashMap<String, Municipality>();
+		provinces = new HashMap<String, Province>();
+		PTStop currentStop;
+		String mName;
+		String pName;
+		Municipality currentM;
+
+		for (Entry<String, PTStop> entry : busstops.entrySet()) {
+			currentStop = entry.getValue();
+			if (!currentStop.getMunicipality().equals("")) {
+				mName = currentStop.getMunicipality();
+				pName = currentStop.getProvince();
+
+				// Add municipality if it does not exist yet
+				if (municipalities.get(mName) == null) {
+					Municipality newM = new Municipality(mName, pName, 0, 0);
+					newM.addStop(currentStop);
+					currentM = newM;
+					municipalities.put(mName, newM);
+				} else {
+					currentM = municipalities.get(mName);
+					currentM.addStop(currentStop);
+				}
+				// Same for province
+				if (provinces.get(pName) == null) {
+					Province newP = new Province(pName);
+					newP.addMunicipality(currentM);
+					provinces.put(pName, newP);
+				} else {
+					provinces.get(pName).addMunicipality(currentM);
+				}
+			}
+
+		}
+		System.out.println("Made municipality and province objects.");
+
+	}
+
+	public static void readPopulationFile() {
+		// Read the population file
+		try {
+			BufferedReader br;
+			String line = "";
+			Municipality currentM;
+
+			br = new BufferedReader(new FileReader(populationFile));
+			br.readLine();
+			while ((line = br.readLine()) != null) {
+				String[] splitLine = line.split(";");
+				currentM = municipalities.get(splitLine[0]);
+				if (currentM != null) {
+					currentM.setPopulation(Integer.parseInt(splitLine[1]));
+					currentM.setPopPerSquareKm(Integer.parseInt(splitLine[2]));
+				} else
+					System.out.println("Could not find data in memory for "
+							+ splitLine[0]);
+			}
+
+			br.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("Added population data to municipalities.");
+	}
+
+	public static void outputMunicipalitiesToFile() {
+		try {
+			File file = new File(outputFile);
+
+			// if file doesn't exist, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			bw.write("type,name,province,population,populationPerKm2,numberOfStops,numberOfRoutes\n");
+			String line;
+			Municipality currentM;
+			for (Entry<String, Municipality> entry : municipalities.entrySet()) {
+				currentM = entry.getValue();
+				line = "municipality," + currentM.getName() + ","
+						+ currentM.getProvince() + ","
+						+ currentM.getPopulation() + ","
+						+ currentM.getPopPerSquareKm() + ","
+						+ currentM.getBusStops().size() + ","
+						+ currentM.getBusRoutes().size() + "\n";
+				bw.write(line);
+			}
+
+			Province currentP;
+			for (Entry<String, Province> entry : provinces.entrySet()) {
+				currentP = entry.getValue();
+				line = "province," + entry.getKey() + "," + entry.getKey()
+						+ "," + currentP.getTotalPopulation() + ","
+						+ currentP.getTotalPopPerSquareKm() + ","
+						+ currentP.getTotalStops() + ","
+						+ currentP.getTotalRoutes() + "\n";
+				bw.write(line);
 			}
 
 			bw.close();

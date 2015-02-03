@@ -15,7 +15,7 @@ public class PTStop {
 	private String longitude;
 	private String operator;
 
-	private ArrayList<String> lines;
+	private ArrayList<String> routes;
 
 	public PTStop(String id, String name, String town, String latitude,
 			String longitude) {
@@ -28,15 +28,19 @@ public class PTStop {
 		this.setOperator("");
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.lines = new ArrayList<String>();
+		this.routes = new ArrayList<String>();
 
 	}
 
 	// Add a line if it is not already in the list of lines
-	public void addLine(String line) {
-		if (!lines.contains(line)) {
-			lines.add(line);
+	public void addRoute(String route) {
+		if (!routes.contains(route)) {
+			routes.add(route);
 		}
+	}
+
+	public ArrayList<String> getRoutes() {
+		return routes;
 	}
 
 	// Getters and setters
@@ -98,7 +102,7 @@ public class PTStop {
 
 	public String routesToString() {
 		String toReturn = "";
-		for (String route : lines) {
+		for (String route : routes) {
 			toReturn += route + "/";
 		}
 		return (toReturn.substring(0, toReturn.length() - 1));
@@ -118,6 +122,13 @@ public class PTStop {
 
 	public void setOperator(String operator) {
 		this.operator = operator;
+	}
+
+	public boolean equals(Object other) {
+		if (!(other instanceof PTStop))
+			return false;
+		PTStop that = (PTStop) other;
+		return this.id.equals(that.getId());
 	}
 
 }
