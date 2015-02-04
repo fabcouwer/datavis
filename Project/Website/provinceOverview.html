@@ -77,14 +77,14 @@
         <div class="container col-centered">
             <div class="jumbotron jumbotronPadding">
                 <h1>Province overview</h1>
+                <p>This page gives an overview of the current state of public transport categorized for each province. It will provide more insight into several topics, e.g. population and busstops per inhabitant.</p>
             </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <h4>Absolute population per province</h4>
+            <h4>Population</h4>
           </div>
           <div class="col-md-6">
-            <h4>Population per km2 per province</h4>
           </div>
         </div>
         <div class="row">
@@ -92,15 +92,39 @@
             <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col3%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
           </div>
           <div class="col=md-6">
-            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col4%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?containerId=googft-gviz-canvas&amp;q=select+col0%2C+col1+from+1rKrpncSjQRRnsjX33z8mmWO4YNxFNJvl3bOyERZO+order+by+col0+asc+limit+15&amp;viz=GVIZ&amp;t=PIE&amp;uiversion=2&amp;gco_forceIFrame=true&amp;gco_hasLabelsColumn=true&amp;width=500&amp;height=300"></iframe>
           </div>
         </div>
-                <div class="row">
+        <div class="row">
+          <div class="col-md-12">
+            Above graphs show how the population of the Netherlands is divided among the different provinces. It is clearly visible from the choropleth on the left that most people live in the west. The piechart on the right shows what percentage of the total population this is and how they compare to each other.
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-6">
-            <h4>Amount of busstops per province</h4>
+            <h4>Population per km2</h4>
           </div>
           <div class="col-md-6">
-            <h4>Busstops per resident</h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col4%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
+          </div>
+          <div class="col=md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?containerId=googft-gviz-canvas&amp;q=select+col0%2C+col2+from+1rKrpncSjQRRnsjX33z8mmWO4YNxFNJvl3bOyERZO+order+by+col2+asc+limit+12&amp;viz=GVIZ&amp;t=BAR&amp;uiversion=2&amp;gco_forceIFrame=true&amp;gco_hasLabelsColumn=true&amp;gco_useFirstColumnAsDomain=true&amp;gco_isStacked=false&amp;gco_booleanRole=certainty&amp;gco_hAxis=%7B%22useFormatFromData%22%3Afalse%2C+%22viewWindow%22%3A%7B%22max%22%3Anull%2C+%22min%22%3Anull%7D%2C+%22minValue%22%3Anull%2C+%22maxValue%22%3Anull%2C+%22logScale%22%3Afalse%2C+%22formatOptions%22%3A%7B%22source%22%3A%22inline%22%7D%2C+%22format%22%3A%220.%23%23%22%7D&amp;gco_vAxes=%5B%7B%22useFormatFromData%22%3Atrue%2C+%22minValue%22%3Anull%2C+%22maxValue%22%3Anull%2C+%22viewWindow%22%3Anull%2C+%22viewWindowMode%22%3Anull%7D%2C%7B%22useFormatFromData%22%3Atrue%7D%5D&amp;gco_legend=right&amp;width=500&amp;height=300"></iframe>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            The two images above support our claim that most of the population is concentrated in the west. The three provinces that stand out are: Zuid-Holland, Noord-Holland and Utrecht. These three provinces combined are known as the Randstad. It contains the four biggest cities of the Netherlands. We will be comparing these provinces with the other, less densily populated, provinces.
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <h4>Total amount of busstops</h4>
+          </div>
+          <div class="col-md-6">
           </div>
         </div>
         <div class="row">
@@ -108,7 +132,32 @@
             <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col5%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
           </div>
           <div class="col=md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?containerId=googft-gviz-canvas&amp;q=select+col0%2C+col3+from+1rKrpncSjQRRnsjX33z8mmWO4YNxFNJvl3bOyERZO+order+by+col0+asc+limit+15&amp;viz=GVIZ&amp;t=PIE&amp;uiversion=2&amp;gco_forceIFrame=true&amp;gco_hasLabelsColumn=true&amp;width=500&amp;height=300"></iframe>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            Text goes here
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <h4>Busstops per inhabitant</h4>
+          </div>
+          <div class="col-md-6">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
             <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col10%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
+          </div>
+          <div class="col=md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?containerId=googft-gviz-canvas&amp;q=select+col0%2C+col8+from+1rKrpncSjQRRnsjX33z8mmWO4YNxFNJvl3bOyERZO+order+by+col8+asc+limit+12&amp;viz=GVIZ&amp;t=BAR&amp;uiversion=2&amp;gco_forceIFrame=true&amp;gco_hasLabelsColumn=true&amp;width=500&amp;height=300"></iframe>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            Text goes here
           </div>
         </div>
     </div>

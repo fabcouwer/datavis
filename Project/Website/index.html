@@ -33,8 +33,8 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         var provincieFileName = "provincies.csv";
         var gemeenteFileName = "gemeenten.csv";
         var stopsFileName = "markerData.csv";
-        var statisticsProvincieFileName = "perProvincie v2.csv";
-        var statisticsGemeenteFileName = "municipalityData v4.csv";
+        var statisticsProvincieFileName = "ranked provinces v2.csv";
+        var statisticsGemeenteFileName = "ranked municipalities v2.csv";
         // last nine columns of gemeenteFile do not hold long/lat coords
         function readData(fileName, provincieBool) {
           $(document).ready(function() {
@@ -84,11 +84,25 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           var parsedInput = $.csv.toArrays(data);
           for(i = 1;i<parsedInput.length;i++) {
             for(j = 0; j < provinciePolygons.length;j++) {
-              if(parsedInput[i][1] == provinciePolygons[j].provincie) {
-                provinciePolygons[j].population = parsedInput[i][3];
-                provinciePolygons[j].popPerKm2 = parsedInput[i][4];
-                provinciePolygons[j].numberOfStops = parsedInput[i][5];
-                provinciePolygons[j].numberOfRoutes = parsedInput[i][6];
+              if(parsedInput[i][0] == provinciePolygons[j].provincie) {
+                provinciePolygons[j].Population = parsedInput[i][1];
+                provinciePolygons[j].PopulationPerKm2 = parsedInput[i][2];
+                provinciePolygons[j].NumberOfStops = parsedInput[i][3];
+                provinciePolygons[j].NumberOfRoutes = parsedInput[i][4];
+                provinciePolygons[j].AreaInKm2 = parsedInput[i][5];
+                provinciePolygons[j].StopsPerKm2 = parsedInput[i][6];
+                provinciePolygons[j].RoutesPerKm2 = parsedInput[i][7];
+                provinciePolygons[j].StopsPerInhabitant = parsedInput[i][8];
+                provinciePolygons[j].RoutesPerInhabitant = parsedInput[i][9];
+                provinciePolygons[j].Population_Rank = parsedInput[i][10];
+                provinciePolygons[j].Population_Km2_Rank = parsedInput[i][11];
+                provinciePolygons[j].NumStops_Rank = parsedInput[i][12];
+                provinciePolygons[j].NumRoutes_Rank = parsedInput[i][13];
+                provinciePolygons[j].Area_Rank = parsedInput[i][14];
+                provinciePolygons[j].Stops_Km2_Rank = parsedInput[i][15];
+                provinciePolygons[j].Routes_Km2_Rank = parsedInput[i][16];
+                provinciePolygons[j].Stops_Pop_Rank = parsedInput[i][17];
+                provinciePolygons[j].Routes_Pop_Rank = parsedInput[i][18];
               }
             }
           }
@@ -98,11 +112,25 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           var parsedInput = $.csv.toArrays(data);
           for(i = 1;i<parsedInput.length;i++) {
             for(j = 0; j < gemeentePolygons.length;j++) {
-              if(parsedInput[i][1] == gemeentePolygons[j].gemeente) {
-                gemeentePolygons[j].population = parsedInput[i][3];
-                gemeentePolygons[j].popPerKm2 = parsedInput[i][4];
-                gemeentePolygons[j].numberOfStops = parsedInput[i][5];
-                gemeentePolygons[j].numberOfRoutes = parsedInput[i][6];
+              if(parsedInput[i][0] == gemeentePolygons[j].gemeente) {
+                gemeentePolygons[j].Population = parsedInput[i][1];
+                gemeentePolygons[j].PopulationPerKm2 = parsedInput[i][2];
+                gemeentePolygons[j].NumberOfStops = parsedInput[i][3];
+                gemeentePolygons[j].NumberOfRoutes = parsedInput[i][4];
+                gemeentePolygons[j].AreaInKm2 = parsedInput[i][5];
+                gemeentePolygons[j].StopsPerKm2 = parsedInput[i][6];
+                gemeentePolygons[j].RoutesPerKm2 = parsedInput[i][7];
+                gemeentePolygons[j].StopsPerInhabitant = parsedInput[i][8];
+                gemeentePolygons[j].RoutesPerInhabitant = parsedInput[i][9];
+                gemeentePolygons[j].Population_Rank = parsedInput[i][10];
+                gemeentePolygons[j].Population_Km2_Rank = parsedInput[i][11];
+                gemeentePolygons[j].NumStops_Rank = parsedInput[i][12];
+                gemeentePolygons[j].NumRoutes_Rank = parsedInput[i][13];
+                gemeentePolygons[j].Area_Rank = parsedInput[i][14];
+                gemeentePolygons[j].Stops_Km2_Rank = parsedInput[i][15];
+                gemeentePolygons[j].Routes_Km2_Rank = parsedInput[i][16];
+                gemeentePolygons[j].Stops_Pop_Rank = parsedInput[i][17];
+                gemeentePolygons[j].Routes_Pop_Rank = parsedInput[i][18];
               }
             }
           }
@@ -239,10 +267,24 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           gemeente: gemeente,
           provincie: provincie,
           infoWindowPos: bounds.getCenter(),
-          population: 0,
-          popPerKm2: 0,
-          numberOfStops: 0,
-          numberOfRoutes: 0
+          Population: 0,
+          PopulationPerKm2: 0,
+          NumberOfStops: 0,
+          NumberOfRoutes: 0,
+          AreaInKm2: 0,
+          StopsPerKm2: 0,
+          RoutesPerKm2: 0,
+          StopsPerInhabitant: 0,
+          RoutesPerInhabitant: 0,
+          Population_Rank: 0,
+          Population_Km2_Rank: 0,
+          NumStops_Rank: 0,
+          NumRoutes_Rank: 0,
+          Area_Rank: 0,
+          Stops_Km2_Rank: 0,
+          Routes_Km2_Rank: 0,
+          Stops_Pop_Rank: 0,
+          Routes_Pop_Rank: 0
         });
         google.maps.event.addListener(polygon, 'click', function () {
           hideMarkers();
@@ -335,34 +377,129 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         infoWindow.setPosition(marker.position);
         infoWindow.open(googleMap);
       }
-
       /** @this {google.maps.Polygon} */
     function fillPopup(polygon) {
       // Replace the info window's content and position.
       if(polygon.gemeente == null) {
         infoWindow.setContent(
           "<div id='infoWindow'>" +
-          "Provincie: " + polygon.provincie + "<br>" +
-          "Population: " + polygon.population + "<br>" +
-          "Population per km2: " + polygon.popPerKm2 + "<br>" +
-          "Number of stops: " + polygon.numberOfStops + "<br>" +
-          "Number of stops per person: " + (polygon.numberOfStops/polygon.population).toFixed(5) + "<br>" +
-          "Number of stops per km2: " + (polygon.numberOfStops/(polygon.population/polygon.popPerKm2)).toFixed(5) + "<br>" +
-          "Number of routes: " + polygon.numberOfRoutes + "<br>" +
+          "<br>" +
+          "<table style='widht:100%'>" +
+            "<tr>" +
+              "<td>" + "Provincie: " + "</td>" + 
+              "<td>" + polygon.provincie + "</td>" + 
+              "<td>" + "</td>" +
+            "</tr>" + 
+            "<tr>" +
+              "<td>" + "Population: " + "</td>" + 
+              "<td>" + polygon.population + "</td>" +
+              "<td>" + polygon.Population_Rank+ "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Population per km2: " + "</td>" + 
+              "<td>" + polygon.PopulationPerKm2 + "<td>" +
+              "<td>" + polygon.Population_Km2_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.NumberOfStops + "</td>" +
+              "<td>" + polygon.NumStops_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.NumberOfRoutes + "</td>" +
+              "<td>" + polygon.NumRoutes_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.AreaInKm2 + "</td>" +
+              "<td>" + polygon.Area_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.StopsPerKm2 + "</td>" +
+              "<td>" + polygon.Stops_Km2_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.RoutesPerKm2 + "</td>" +
+              "<td>" + polygon.Routes_Km2_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.StopsPerInhabitant + "</td>" +
+              "<td>" + polygon.Stops_Pop_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.RoutesPerInhabitant + "</td>" +
+              "<td>" + polygon.Routes_Pop_Rank + "</td>" +
+            "</tr>" +
+          "</table>" +
           "</div>"
           );
       }
       else {
         infoWindow.setContent(
-          "<div id = 'infoWindow'>" +
-          "Provincie: " + polygon.provincie + "<br>" +
-          "Gemeente: " + polygon.gemeente + "<br>" +
-          "Population: " + polygon.population + "<br>" +
-          "Population per km2: " + polygon.popPerKm2 + "<br>" +
-          "Number of stops: " + polygon.numberOfStops + "<br>" +
-          "Number of stops per person: " + (polygon.numberOfStops/polygon.population).toFixed(5) + "<br>" +
-          "Number of stops per km2: " + (polygon.numberOfStops/(polygon.population/polygon.popPerKm2)).toFixed(5) + "<br>" +
-          "Number of routes: " + polygon.numberOfRoutes + "<br>" +
+          "<div id='infoWindow'>" +
+          "<br>" +
+          "<table style='widht:100%'>" +
+            "<tr>" +
+              "<td>" + "Provincie: " + "</td>" + 
+              "<td>" + polygon.provincie + "</td>" + 
+              "<td>" + "</td>" +
+            "</tr>" + 
+            "<tr>" +
+              "<td>" + "Gemeente: " + "</td>" + 
+              "<td>" + polygon.gemeente + "</td>" + 
+              "<td>" + "</td>" +
+            "</tr>" + 
+            "<tr>" +
+              "<td>" + "Population: " + "</td>" + 
+              "<td>" + polygon.population + "</td>" +
+              "<td>" + polygon.Population_Rank+ "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Population per km2: " + "</td>" + 
+              "<td>" + polygon.PopulationPerKm2 + "<td>" +
+              "<td>" + polygon.Population_Km2_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.NumberOfStops + "</td>" +
+              "<td>" + polygon.NumStops_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.NumberOfRoutes + "</td>" +
+              "<td>" + polygon.NumRoutes_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.AreaInKm2 + "</td>" +
+              "<td>" + polygon.Area_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.StopsPerKm2 + "</td>" +
+              "<td>" + polygon.Stops_Km2_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.RoutesPerKm2 + "</td>" +
+              "<td>" + polygon.Routes_Km2_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.StopsPerInhabitant + "</td>" +
+              "<td>" + polygon.Stops_Pop_Rank + "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + polygon.RoutesPerInhabitant + "</td>" +
+              "<td>" + polygon.Routes_Pop_Rank + "</td>" +
+            "</tr>" +
+          "</table>" +
           "</div>"
         );
       }
@@ -526,8 +663,11 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
  line-height: 20px;
 }
 #infoWindow{
-width:250px;
-height:175px;
+  width:330px;
+  height:175px;
+}
+td {
+  padding-right: 5px;
 }
 </style>
 
