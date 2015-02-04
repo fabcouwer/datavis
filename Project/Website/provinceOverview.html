@@ -65,9 +65,10 @@
                       <a href="index.html">Home</a>
                     </li>
                     <li>
-                      <a href="Choropleth.html">Choropleths</a>
+                      <a href="provinceOverview.html">Province overview</a>
                     </li>
                     <li>
+                      <a href="municipalityOverview.html">Municipality overview</a>
                     </li>
                   </ul>
                 </div>
@@ -75,39 +76,39 @@
 
         <div class="container col-centered">
             <div class="jumbotron jumbotronPadding">
-                <h1>Choropleths</h1>
+                <h1>Province overview</h1>
             </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
+            <h4>Absolute population per province</h4>
           </div>
-          <div class="col-md-4">
-            <div class="btn-group">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-              Provincies
-              <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" id="menuTime1" role="menu" aria-labelledby="dropdownMenu1">
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
-              </ul>
-            </div>
+          <div class="col-md-6">
+            <h4>Population per km2 per province</h4>
           </div>
-          <div class="col-md-4">
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col3%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
           </div>
-          <div class="col-md-4">
-            <div class="btn-group">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
-              Provincies
-              <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" id="menuTime2" role="menu" aria-labelledby="dropdownMenu2">
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
-              </ul>
-            </div>
+          <div class="col=md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col4%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
+          </div>
+        </div>
+                <div class="row">
+          <div class="col-md-6">
+            <h4>Amount of busstops per province</h4>
+          </div>
+          <div class="col-md-6">
+            <h4>Busstops per resident</h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col5%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
+          </div>
+          <div class="col=md-6">
+            <iframe width="500" height="300" scrolling="no" frameborder="no" src="https://www.google.com/fusiontables/embedviz?viz=GVIZ&amp;t=MAP&amp;gco_region=NL&amp;gco_dataMode=regions&amp;containerId=googft-gviz-canvas&amp;q=select+gvizregion(col1)%2C+col10%2C+col1+from+1rnwARsf2IKfZ4guU1cy_C9at1qe-HZdRtzYwsv0r+where+col0+%3D+&#39;province&#39;&amp;qrs=+and+gvizregion(col1)+%3E%3D+&amp;qre=+and+gvizregion(col1)+%3C%3D+&amp;qe=+limit+12&amp;width=500&amp;height=300"></iframe>
           </div>
         </div>
     </div>
