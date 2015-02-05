@@ -350,7 +350,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         readData(provincieFileName, true);
         readData(gemeenteFileName, false);
         readStops(stopsFileName);
-        currentActivePolygons = "Provincies";
+        currentActivePolygons = "Provinces";
         infoWindow = new google.maps.InfoWindow({
           width: 400
         });
@@ -512,15 +512,15 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
       if(polygonMode == currentActivePolygons) {
         // Do nothing
       }
-      else if(polygonMode == "Provincies") {
+      else if(polygonMode == "Provinces") {
         showProvinciePolygons();
         hideGemeentePolygons();
-        currentActivePolygons = "Provincies";
+        currentActivePolygons = "Provinces";
       }
-      else if(polygonMode == "Gemeenten") {
+      else if(polygonMode == "Municipalities") {
         hideProvinciePolygons();
         showGemeentePolygons();
-        currentActivePolygons = "Gemeenten";
+        currentActivePolygons = "Municipalities";
       }
       else {
         // None has been selected, hide all
@@ -679,7 +679,7 @@ td {
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
               <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">OpenOV Visualization</a>
+                    <a class="navbar-brand">Bus Stops and Routes in the Netherlands</a>
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
@@ -693,9 +693,10 @@ td {
                       <a href="index.html">Home</a>
                     </li>
                     <li>
-                      <a href="provinceOverview.html">Province overview</a>
+                      <a href="provinceOverview.html">Province Overview</a>
                     </li>
                     <li>
+                      <a href="municipalityOverview.html">Municipality Overview</a>
                     </li>
                   </ul>
                 </div>
@@ -703,7 +704,7 @@ td {
 
         <div class="container col-centered">
             <div class="jumbotron jumbotronPadding">
-                <h1>OpenOV visualization</h1>
+                <h1>OpenOV Visualization</h1>
                 <h4>Authors: Friso Abcouwer (4019873) & Marijn Goedegebure (4013484)</h4>
             </div>
         </div>
@@ -717,8 +718,8 @@ td {
               <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">Gemeenten</a></li>
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">Provincies</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Municipalities</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Provinces</a></li>
                   <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
               </ul>
             </div>
@@ -735,6 +736,20 @@ td {
         <div class="row">
             <div id="map-canvas"></div>
         </div>
+        <div><br><br><br>
+        <h2>Instructions</h2>
+        <p>The frame above allows you to investigate bus stops and bus routes in the Netherlands per province or municipality.
+        You can click on an area of the map or bus stop marker for more information about your selection. You can use the scrollwheel, double-click or use the zoom bar at the left of the map to zoom in and out.</p>
+
+        <h2>Our Data</h2>
+        <p>Our data is an aggregation of the following datasets:
+          <ul>
+            <li> Bus Stops and Routes from <a href="http://openov.nl">OpenOV.</a></li>
+            <li> Province and Municipality Geometry-files from SOURCE.</li>
+            <li> Population statistics from <a href="http://www.cbs.nl/nl-NL/menu/home/default.htm">CBS.</a></li>
+          </ul>
+        </p>
+      </div>
     </div>
     <div id="footer" style="height:50px">
     </div>

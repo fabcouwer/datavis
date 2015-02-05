@@ -26,9 +26,17 @@ For these reasons, we decided to visualize public transportation in the Netherla
 
 \section{Design Process}
 \begin{itemize}
-\item Where/how did we find data
-\item How did we filter the data and why
-\item How did we present the data and why
+\item \textbf{Datasets:}
+The website OpenOV~\footnote{http://openov.nl} offers a lot of public transportation datasets. Since the bus stop datasets already had longitude and latitude data, we realised this would make it possible to visualize them geographically. 
+\textbf{TODO Something about the KML files }
+Finally, we found statistics on the population of every municipality published by CBS~\footnote{www.cbs.nl}.
+\item \textbf{Processing the Data:}
+We used Java and Javascript to process the data. Since we could not find a dataset linking towns to their municipality and province, we had to assign a municipality and province to each bus stop ourselves. The ProvinceProcessor class outputs a file with this information.
+This file and the data from OpenOV and CBS, are used in the DataSetProcessor class to aggregate information into a single dataset that can be used for visualization. It can output a file with information on every single bus stop, or a file with information for every municipality and province.
+While working on this conversion, we noticed several types of data in the OpenOV file that were not usable for our purposes. These included places where there is currently no bus route scheduled, badly formatted lines or entries that represented a train station instead of a bus stop. This brought our total down to about 50.000 stops from 55.000, the vast majority being unscheduled entries. Matching stops to provinces went relatively smoothly: less than 250 stops could not be assigned to a province based on the geometrical data. Since this was less than 0,5\% of our data, we decided to omit these entries from our visualization rather than find a method to include them.
+\item \textbf{Presenting the Data:}
+We used the Google Maps API.... (TODO explain the main visualization).
+In addition, we analysed our file and made observations based on choropleth maps, bar charts and pie charts. These can be found on the province and municipality overview pages.
 \end{itemize}
 
 \end{document}
