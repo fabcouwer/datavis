@@ -25,19 +25,27 @@ A lot of people rely on websites like \url{http://9292.nl} to help them navigate
 For these reasons, we decided to visualize public transportation in the Netherlands. While there is open data available for most modes of public transportation, we decided to focus on transportation by bus for our project. In this report, we will explain how we acquired our datasets and how we filtered them, as well as motivate our design choices.  
 
 \section{Design Process}
+\subsection{Datasets:}
+The website OpenOV~\footnote{http://openov.nl} offers a lot of public transportation datasets. Since the bus stop datasets already had longitude and latitude data, we realised this would make it possible to visualize them geographically. In the end we used the following datasets:
 \begin{itemize}
-\item \textbf{Datasets:}
-The website OpenOV~\footnote{http://openov.nl} offers a lot of public transportation datasets. Since the bus stop datasets already had longitude and latitude data, we realised this would make it possible to visualize them geographically. 
-\textbf{TODO Something about the KML files }
-Finally, we found statistics on the population of every municipality published by CBS~\footnote{www.cbs.nl}.
-\item \textbf{Processing the Data:}
+\item Geographical data of the borders of municipalities and provinces (Imergis~\footnote{http://www.imergis.nl/asp/47.asp})
+\item Inhabitant counts of municipalities and provinces (CBS~\footnote{www.cbs.nl})
+\item Geographical bus stop data (OpenOV)
+\item Lines per bus stop data (OpenOV)
+\end{itemize}
+
+As can be seen from the list above, we used multiple different datasets. Unfortunately the datasets are not in the same format. To use this data we had to convert some datasets to a more usable format. This required the use of some specific tools. We used QGIS~\footnote{http://www2.qgis.org/} to convert the geographical data of the borders of municipalities and provinces from shapefiles to kml files. Unlike shapefiles, kml files are supported by the google maps api and can also be converted to csv files.
+\subsection{Processing the Data:}
 We used Java and Javascript to process the data. Since we could not find a dataset linking towns to their municipality and province, we had to assign a municipality and province to each bus stop ourselves. The ProvinceProcessor class outputs a file with this information.
 This file and the data from OpenOV and CBS, are used in the DataSetProcessor class to aggregate information into a single dataset that can be used for visualization. It can output a file with information on every single bus stop, or a file with information for every municipality and province.
 While working on this conversion, we noticed several types of data in the OpenOV file that were not usable for our purposes. These included places where there is currently no bus route scheduled, badly formatted lines or entries that represented a train station instead of a bus stop. This brought our total down to about 50.000 stops from 55.000, the vast majority being unscheduled entries. Matching stops to provinces went relatively smoothly: less than 250 stops could not be assigned to a province based on the geometrical data. Since this was less than 0,5\% of our data, we decided to omit these entries from our visualization rather than find a method to include them.
-\item \textbf{Presenting the Data:}
-We used the Google Maps API.... (TODO explain the main visualization).
-In addition, we analysed our file and made observations based on choropleth maps, bar charts and pie charts. These can be found on the province and municipality overview pages.
-\end{itemize}
+\subsection{Presenting the Data:}
+To achieve our visualization purposes, that were described in the problem description, we choose for two kinds of visualizations. The first one is an interactive map, the second one are graphs based on the raw data. We will quickly explain why we choose for each of these visualizations.\\
+
+Firstly, an interactive map lets the user to look through the raw data. This comes with a risk of the user seeing too much information and being confused by this. We solved this by making the map adapt to the users zoom level and selection. For example: A user can select and zoom in on a municipality and can see the individual bus stops in that municipality. When the user zooms out the individual bus stops are hidden and the municipality pop-up remains.\\
+The user can also select whether he wants to interact with the data sorted by provinces or municipalities. This also reduces the amount of data the user can see at the same time. Which reduces the risk of the user not understanding what he is looking at.\\
+
+Secondly, we analysed our datasets and made observations based on choropleth maps, bar charts and pie charts. These can be found on the province and municipality overview pages. These maps and charts even further reduce the data the user sees in a single graph and focus on a particular aspect. For each graph we briefly discuss how they can be interpreted and what the implications of these interpretations are. These maps and charts give the user a quick overview of the data and present some interesting facts that could spark a further inspection using the interactive map.
 
 \end{document}
 
