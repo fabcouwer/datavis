@@ -210,7 +210,9 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               row = parsedInput[i];
               if(provinceBool) {
                 // Check whether the new row holds data for a new province
-                if(previousProvince != row[row.length-1]) {
+                if(previousProvince == row[row.length-1]) {
+                }
+                else {
                   createPolygons(output, provinceBool, i, null, previousProvince);
                   output = [];
                   previousProvince = row[row.length-1];
@@ -224,7 +226,9 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               }
               else {
                 // Check whether the new row holds data for a new municipality
-                if(previousMunicipality != row[row.length-2] && previousProvince != row[row.length-1]) {
+                if(previousMunicipality == row[row.length-2] && previousProvince == row[row.length-1]) {
+                }
+                else {
                   createPolygons(output, provinceBool, i, previousMunicipality, previousProvince);
                   var output = [];
                   previousProvince = row[row.length-1];
