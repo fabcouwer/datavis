@@ -13,40 +13,38 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
     <script src=bootstrap-3.1.1-dist/js/bootstrap.min.js></script>
     <script src=jquery.csv-0.71.js></script>
     <script type="text/javascript">
-        var geoXml = null;
-        var geoXmlDoc = null;
-        var stops = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274]];
-        var gemeente = [[52.011826, 4.541892],[52.001012, 4.525712],[52.005425, 4.539274],[52.011826, 4.541892]];
-        var gemeenteCoords = [];
-        //var provincieCoords = [];
-        var provincieMarkers = [];
-        var gemeenteMarkers = [];
+        // Global variables declared to be used by multiple methods
+        var provinceMarkers = [];
+        var municipalityMarkers = [];
         var googleMap;
         var infoWindow;
-        var provinciePolygons = [];
-        var gemeentePolygons = [];
+        var provincePolygons = [];
+        var municipalityPolygons = [];
         var currentActivePolygons;
         var currentlySelectedPolygon = null;
         var markersVisible = true;
         var ready = false;
 
-        var provincieFileName = "provincies.csv";
-        var gemeenteFileName = "gemeenten.csv";
+        // Variables that hold all the names of the different datasets used during the generation of the map
+        var provinceFileName = "provinces.csv";
+        var municipalityFileName = "municipalities.csv";
         var stopsFileName = "markerData.csv";
-        var statisticsProvincieFileName = "ranked provinces v2.csv";
-        var statisticsGemeenteFileName = "ranked municipalities v2.csv";
-        // last nine columns of gemeenteFile do not hold long/lat coords
-        function readData(fileName, provincieBool) {
+        var statisticsProvinceFileName = "ranked provinces v2.csv";
+        var statisticsMunicipalityFileName = "ranked municipalities v2.csv";
+        
+        // Reads in the geographical data of the borders of both municipalities and provinces
+        function readData(fileName, provinceBool) {
           $(document).ready(function() {
               $.ajax({
                   type: "GET",
                   url: fileName,
                   dataType: "text",
-                  success: function(data) {processData(data, provincieBool);}
+                  success: function(data) {processData(data, provinceBool);}
                });
           });
         }
 
+        // Reads in the bus stop data
         function readStops(fileName) {
           $(document).ready(function() {
               $.ajax({
@@ -58,84 +56,89 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           });
         }
 
-        function readStatisticsProvincie(fileName) {
+        // Reads in the statistics and rankings for all of the provinces
+        function readStatisticsProvince(fileName) {
           $(document).ready(function() {
               $.ajax({
                   type: "GET",
                   url: fileName,
                   dataType: "text",
-                  success: function(data) {processProvincieStatistics(data);}
+                  success: function(data) {processProvinceStatistics(data);}
                });
           });
         }
 
-        function readStatisticsGemeente(fileName) {
+        // Reads in the statistics and rankings for all of the municipalities
+        function readStatisticsMunicipality(fileName) {
           $(document).ready(function() {
               $.ajax({
                   type: "GET",
                   url: fileName,
                   dataType: "text",
-                  success: function(data) {processGemeenteStatistics(data);}
+                  success: function(data) {processMunicipalityStatistics(data);}
                });
           });
         }
 
-        function processProvincieStatistics(data) {
+        // Processes all of the province statistical data
+        function processProvinceStatistics(data) {
           var parsedInput = $.csv.toArrays(data);
           for(i = 1;i<parsedInput.length;i++) {
-            for(j = 0; j < provinciePolygons.length;j++) {
-              if(parsedInput[i][0] == provinciePolygons[j].provincie) {
-                provinciePolygons[j].Population = parsedInput[i][1];
-                provinciePolygons[j].PopulationPerKm2 = parsedInput[i][2];
-                provinciePolygons[j].NumberOfStops = parsedInput[i][3];
-                provinciePolygons[j].NumberOfRoutes = parsedInput[i][4];
-                provinciePolygons[j].AreaInKm2 = parsedInput[i][5];
-                provinciePolygons[j].StopsPerKm2 = parsedInput[i][6];
-                provinciePolygons[j].RoutesPerKm2 = parsedInput[i][7];
-                provinciePolygons[j].StopsPerInhabitant = parsedInput[i][8];
-                provinciePolygons[j].RoutesPerInhabitant = parsedInput[i][9];
-                provinciePolygons[j].Population_Rank = parsedInput[i][10];
-                provinciePolygons[j].Population_Km2_Rank = parsedInput[i][11];
-                provinciePolygons[j].NumStops_Rank = parsedInput[i][12];
-                provinciePolygons[j].NumRoutes_Rank = parsedInput[i][13];
-                provinciePolygons[j].Area_Rank = parsedInput[i][14];
-                provinciePolygons[j].Stops_Km2_Rank = parsedInput[i][15];
-                provinciePolygons[j].Routes_Km2_Rank = parsedInput[i][16];
-                provinciePolygons[j].Stops_Pop_Rank = parsedInput[i][17];
-                provinciePolygons[j].Routes_Pop_Rank = parsedInput[i][18];
+            for(j = 0; j < provincePolygons.length;j++) {
+              if(parsedInput[i][0] == provincePolygons[j].province) {
+                provincePolygons[j].Population = parsedInput[i][1];
+                provincePolygons[j].PopulationPerKm2 = parsedInput[i][2];
+                provincePolygons[j].NumberOfStops = parsedInput[i][3];
+                provincePolygons[j].NumberOfRoutes = parsedInput[i][4];
+                provincePolygons[j].AreaInKm2 = parsedInput[i][5];
+                provincePolygons[j].StopsPerKm2 = parsedInput[i][6];
+                provincePolygons[j].RoutesPerKm2 = parsedInput[i][7];
+                provincePolygons[j].StopsPerInhabitant = parsedInput[i][8];
+                provincePolygons[j].RoutesPerInhabitant = parsedInput[i][9];
+                provincePolygons[j].Population_Rank = parsedInput[i][10];
+                provincePolygons[j].Population_Km2_Rank = parsedInput[i][11];
+                provincePolygons[j].NumStops_Rank = parsedInput[i][12];
+                provincePolygons[j].NumRoutes_Rank = parsedInput[i][13];
+                provincePolygons[j].Area_Rank = parsedInput[i][14];
+                provincePolygons[j].Stops_Km2_Rank = parsedInput[i][15];
+                provincePolygons[j].Routes_Km2_Rank = parsedInput[i][16];
+                provincePolygons[j].Stops_Pop_Rank = parsedInput[i][17];
+                provincePolygons[j].Routes_Pop_Rank = parsedInput[i][18];
               }
             }
           }
         }
 
-        function processGemeenteStatistics(data) {
+        // Processes all of the municipality statistical data
+        function processMunicipalityStatistics(data) {
           var parsedInput = $.csv.toArrays(data);
           for(i = 1;i<parsedInput.length;i++) {
-            for(j = 0; j < gemeentePolygons.length;j++) {
-              if(parsedInput[i][0] == gemeentePolygons[j].gemeente) {
-                gemeentePolygons[j].Population = parsedInput[i][1];
-                gemeentePolygons[j].PopulationPerKm2 = parsedInput[i][2];
-                gemeentePolygons[j].NumberOfStops = parsedInput[i][3];
-                gemeentePolygons[j].NumberOfRoutes = parsedInput[i][4];
-                gemeentePolygons[j].AreaInKm2 = parsedInput[i][5];
-                gemeentePolygons[j].StopsPerKm2 = parsedInput[i][6];
-                gemeentePolygons[j].RoutesPerKm2 = parsedInput[i][7];
-                gemeentePolygons[j].StopsPerInhabitant = parsedInput[i][8];
-                gemeentePolygons[j].RoutesPerInhabitant = parsedInput[i][9];
-                gemeentePolygons[j].Population_Rank = parsedInput[i][10];
-                gemeentePolygons[j].Population_Km2_Rank = parsedInput[i][11];
-                gemeentePolygons[j].NumStops_Rank = parsedInput[i][12];
-                gemeentePolygons[j].NumRoutes_Rank = parsedInput[i][13];
-                gemeentePolygons[j].Area_Rank = parsedInput[i][14];
-                gemeentePolygons[j].Stops_Km2_Rank = parsedInput[i][15];
-                gemeentePolygons[j].Routes_Km2_Rank = parsedInput[i][16];
-                gemeentePolygons[j].Stops_Pop_Rank = parsedInput[i][17];
-                gemeentePolygons[j].Routes_Pop_Rank = parsedInput[i][18];
+            for(j = 0; j < municipalityPolygons.length;j++) {
+              if(parsedInput[i][0] == municipalityPolygons[j].municipality) {
+                municipalityPolygons[j].Population = parsedInput[i][1];
+                municipalityPolygons[j].PopulationPerKm2 = parsedInput[i][2];
+                municipalityPolygons[j].NumberOfStops = parsedInput[i][3];
+                municipalityPolygons[j].NumberOfRoutes = parsedInput[i][4];
+                municipalityPolygons[j].AreaInKm2 = parsedInput[i][5];
+                municipalityPolygons[j].StopsPerKm2 = parsedInput[i][6];
+                municipalityPolygons[j].RoutesPerKm2 = parsedInput[i][7];
+                municipalityPolygons[j].StopsPerInhabitant = parsedInput[i][8];
+                municipalityPolygons[j].RoutesPerInhabitant = parsedInput[i][9];
+                municipalityPolygons[j].Population_Rank = parsedInput[i][10];
+                municipalityPolygons[j].Population_Km2_Rank = parsedInput[i][11];
+                municipalityPolygons[j].NumStops_Rank = parsedInput[i][12];
+                municipalityPolygons[j].NumRoutes_Rank = parsedInput[i][13];
+                municipalityPolygons[j].Area_Rank = parsedInput[i][14];
+                municipalityPolygons[j].Stops_Km2_Rank = parsedInput[i][15];
+                municipalityPolygons[j].Routes_Km2_Rank = parsedInput[i][16];
+                municipalityPolygons[j].Stops_Pop_Rank = parsedInput[i][17];
+                municipalityPolygons[j].Routes_Pop_Rank = parsedInput[i][18];
               }
             }
           }
         }
 
+        // Processes all of the bus stop data and creates a marker for each bus stop
         function processStops(data) {
           var parsedInput = $.csv.toArrays(data);
           for(i = 1; i<parsedInput.length;i++) {
@@ -145,44 +148,47 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               name: parsedInput[i][2],
               operator: parsedInput[i][1],
               town: parsedInput[i][5],
-              gemeente: parsedInput[i][6],
-              provincie: parsedInput[i][7],
+              municipality: parsedInput[i][6],
+              province: parsedInput[i][7],
               routes: parsedInput[i][8]
             });
             google.maps.event.addListener(temp, 'click', function () {
               fillPopupMarker(this);
             });
-            var gemeente = null;
-            for(j = 0; j<gemeenteMarkers.length; j++) {
-              if(gemeenteMarkers[j].name == temp.gemeente) {
-                gemeente = gemeenteMarkers[j];
+            var municipality = null;
+            // Check whether municipality has already been added before
+            for(j = 0; j<municipalityMarkers.length; j++) {
+              if(municipalityMarkers[j].name == temp.municipality) {
+                municipality = municipalityMarkers[j];
                 break;
               }
             }
-            if (gemeente == null) {
-              gemeente = {
+            if (municipality == null) {
+              municipality = {
                 markers: [temp],
                 name: parsedInput[i][6]
               };
-              gemeenteMarkers.push(gemeente);
+              municipalityMarkers.push(municipality);
             }
             else {
-              gemeente.markers.push(temp);
+              municipality.markers.push(temp);
             }
           }
         }
 
-        // Process data from resultgeneral into dropdown
-        function processData(allText, provincieBool) {
+        // Process the border data into polygons
+        // Both provinces and municipalities can consist of multiple polygons
+        function processData(allText, provinceBool) {
             var parsedInput = $.csv.toArrays(allText);
             var coords = [];
             var output = [];
             var firstRow = parsedInput[0];
-            var previousProvincie = "";
-            var previousGemeente = "";
+            var previousProvince = "";
+            var previousMunicipality = "";
             var row;
-            if(provincieBool) {
-              previousProvincie = firstRow[firstRow.length-1];
+            // initalization on the first row of the data
+            if(provinceBool) {
+              previousProvince = firstRow[firstRow.length-1];
               for(j=0;j<firstRow.length-1;j+=2) {
                 var temp = new google.maps.LatLng(firstRow[j+1], firstRow[j]);
                 coords.push(temp);
@@ -191,8 +197,8 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               coords = [];
             }
             else {
-              previousProvincie = firstRow[firstRow.length-1];
-              previousGemeente = firstRow[firstRow.length-2];
+              previousProvince = firstRow[firstRow.length-1];
+              previousMunicipality = firstRow[firstRow.length-2];
               for(j=0;j<firstRow.length-2;j+=2) {
                 var temp = new google.maps.LatLng(firstRow[j+1], firstRow[j]);
                 coords.push(temp);
@@ -202,14 +208,12 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             }
             for(i=1;i<parsedInput.length;i++) {
               row = parsedInput[i];
-              if(provincieBool) {
-                if(previousProvincie == row[row.length-1]) {
-                  // Do nothing because the provincies are still the same
-                }
-                else {
-                  createPolygons(output, provincieBool, i, null, previousProvincie);
+              if(provinceBool) {
+                // Check whether the new row holds data for a new province
+                if(previousProvince != row[row.length-1]) {
+                  createPolygons(output, provinceBool, i, null, previousProvince);
                   output = [];
-                  previousProvincie = row[row.length-1];
+                  previousProvince = row[row.length-1];
                 }
                 for(j=0;j<row.length-1;j+=2) {
                   var temp = new google.maps.LatLng(row[j+1], row[j]);
@@ -219,14 +223,12 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
                 coords = [];
               }
               else {
-                if(previousGemeente == row[row.length-2] && previousProvincie == row[row.length-1]) {
-                  // Do nothing because it is still the same gemeente.
-                }
-                else {
-                  createPolygons(output, provincieBool, i, previousGemeente, previousProvincie);
+                // Check whether the new row holds data for a new municipality
+                if(previousMunicipality != row[row.length-2] && previousProvince != row[row.length-1]) {
+                  createPolygons(output, provinceBool, i, previousMunicipality, previousProvince);
                   var output = [];
-                  previousProvincie = row[row.length-1];
-                  previousGemeente = row[row.length-2];
+                  previousProvince = row[row.length-1];
+                  previousMunicipality = row[row.length-2];
                 }
                 for(j=0;j<row.length-2;j+=2) {
                   var temp = new google.maps.LatLng(row[j+1], row[j]);
@@ -236,16 +238,17 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
                 coords = [];
               }
             }
-            if(provincieBool) {
-              createPolygons(output, provincieBool, i, null, row[row.length-1]);
+            if(provinceBool) {
+              createPolygons(output, provinceBool, i, null, row[row.length-1]);
             }
             else {
-              createPolygons(output, provincieBool, i, row[row.length-2], row[row.length-1]);
+              createPolygons(output, provinceBool, i, row[row.length-2], row[row.length-1]);
             }
             ready = true;
         }
 
-      function createPolygons(data, provincieBool, i, gemeente, provincie) {
+      // Function that creates the polygons, it creates all extra values that we use for the pop up
+      function createPolygons(data, provinceBool, i, municipality, province) {
         // Calculate center
         var bounds = new google.maps.LatLngBounds();
         for(i = 0; i < data.length;i++ ) {
@@ -264,8 +267,8 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           fillColor: '#000000',
           fillOpacity: 0.0,
           index: i,
-          gemeente: gemeente,
-          provincie: provincie,
+          municipality: municipality,
+          province: province,
           infoWindowPos: bounds.getCenter(),
           Population: 0,
           PopulationPerKm2: 0,
@@ -286,10 +289,11 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
           Stops_Pop_Rank: 0,
           Routes_Pop_Rank: 0
         });
+        // Add the different event listeners
         google.maps.event.addListener(polygon, 'click', function () {
           hideMarkers();
           fillPopup(this);
-          showMarkers(this.gemeente, this.provincie);
+          showMarkers(this.municipality, this.province);
           currentlySelectedPolygon = this;
         });
         google.maps.event.addListener(polygon, 'mouseover', function () {
@@ -310,20 +314,22 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             fillOpacity: 0.0
           });
         });
-        if(provincieBool) {
+        // Add the polygon to the appropriate array
+        if(provinceBool) {
           polygon.setMap(googleMap);
-          provinciePolygons.push(polygon);
+          provincePolygons.push(polygon);
         }
         else {
           polygon.setMap(null);
-          gemeentePolygons.push(polygon);
+          municipalityPolygons.push(polygon);
         }
       }
 
+      // function that checks whether the provinces and manicipalities polygons have been created
       var check = function() {
           if (ready === true) {
-            readStatisticsProvincie(statisticsProvincieFileName);
-            readStatisticsGemeente(statisticsGemeenteFileName);
+            readStatisticsProvince(statisticsProvinceFileName);
+            readStatisticsMunicipality(statisticsMunicipalityFileName);
              return;
           }
           setTimeout(check, 500);
@@ -331,7 +337,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
 
       check();
 
-        //var map;
+      // Function that is run when the page loads. The function kicks off the different methods to gradually load the different datasets and set up the map
       function initialize() {
         var mapOptions = {
           center: { lat: 52.011826, lng: 4.541892},
@@ -344,31 +350,25 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             hideMarkers();
           }
           else {
-            showMarkers(currentlySelectedPolygon.gemeente, currentlySelectedPolygon.provincie);
+            showMarkers(currentlySelectedPolygon.municipality, currentlySelectedPolygon.province);
           }
         })
-        readData(provincieFileName, true);
-        readData(gemeenteFileName, false);
+        readData(provinceFileName, true);
+        readData(municipalityFileName, false);
         readStops(stopsFileName);
         currentActivePolygons = "Provinces";
         infoWindow = new google.maps.InfoWindow({
           width: 400
         });
       }
-      
-      function convertGemeenteToCoords() {
-        for(i=0;i<gemeente.length;i++) {
-            var temp = new google.maps.LatLng(gemeente[i][0], gemeente[i][1]);
-            gemeenteCoords.push(temp);
-        }
-      }
 
+      // Function used to fill the pop up with data when a marker has been pressed
       function fillPopupMarker(marker) {
         infoWindow.setContent(
           "<div id='infoWindow'>" +
           "Name of stop: " + marker.name + "<br>" +
-          "Provincie: " + marker.provincie + "<br>" +
-          "Gemeente: " + marker.gemeente + "<br>" +
+          "province: " + marker.province + "<br>" +
+          "Municipality: " + marker.municipality + "<br>" +
           "Town: " + marker.town + "<br>" +
           "Routes: " + marker.routes + "<br>" +
           "Operators: " + marker.operator + "<br>" +
@@ -377,10 +377,11 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         infoWindow.setPosition(marker.position);
         infoWindow.open(googleMap);
       }
-      /** @this {google.maps.Polygon} */
+    
+    // Function that fills the popup when a polygon has been pressed. It differentiates between municipalities and provinces.
     function fillPopup(polygon) {
       // Replace the info window's content and position.
-      if(polygon.gemeente == null) {
+      if(polygon.municipality == null) {
         infoWindow.setContent(
           "<div id='infoWindow'>" +
           "<table>" +
@@ -390,8 +391,8 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               "<td>" + "Ranking:" + "</td>" +
             "</tr>" + 
             "<tr>" +
-              "<td>" + "Provincie: " + "</td>" + 
-              "<td>" + polygon.provincie + "</td>" + 
+              "<td>" + "Province: " + "</td>" + 
+              "<td>" + polygon.province + "</td>" + 
               "<td>" + "</td>" +
             "</tr>" + 
             "<tr>" +
@@ -453,13 +454,13 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               "<td>" + "Ranking:" + "</td>" +
             "</tr>" + 
             "<tr>" +
-              "<td>" + "Provincie: " + "</td>" + 
-              "<td>" + polygon.provincie + "</td>" + 
+              "<td>" + "Province: " + "</td>" + 
+              "<td>" + polygon.province + "</td>" + 
               "<td>" + "</td>" +
             "</tr>" + 
             "<tr>" +
-              "<td>" + "Gemeente: " + "</td>" + 
-              "<td>" + polygon.gemeente + "</td>" + 
+              "<td>" + "Municipality: " + "</td>" + 
+              "<td>" + polygon.municipality + "</td>" + 
               "<td>" + "</td>" +
             "</tr>" + 
             "<tr>" +
@@ -516,129 +517,103 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
       infoWindow.open(googleMap);
     }
 
+    // Function used to switch the viewing mode between the provinces and the municipalities.
     function switchPolygonViewing (polygonMode) {
       if(polygonMode == currentActivePolygons) {
         // Do nothing
       }
       else if(polygonMode == "Provinces") {
-        showProvinciePolygons();
-        hideGemeentePolygons();
+        showProvincePolygons();
+        hideMunicipalityPolygons();
         currentActivePolygons = "Provinces";
       }
       else if(polygonMode == "Municipalities") {
-        hideProvinciePolygons();
-        showGemeentePolygons();
+        hideProvincePolygons();
+        showMunicipalityPolygons();
         currentActivePolygons = "Municipalities";
       }
       else {
         // None has been selected, hide all
-        hideProvinciePolygons();
-        hideGemeentePolygons();
+        hideProvincePolygons();
+        hideMunicipalityPolygons();
         currentActivePolygons = "None";
       }
     }
 
-    function showProvinciePolygons() {
-      for(i=0;i<provinciePolygons.length;i++) {
-            provinciePolygons[i].setMap(googleMap);
+    // Shows the province polygons
+    function showProvincePolygons() {
+      for(i=0;i<provincePolygons.length;i++) {
+            provincePolygons[i].setMap(googleMap);
       }
     }
 
-    function showGemeentePolygons() {
-      for(i=0;i<gemeentePolygons.length;i++) {
-          gemeentePolygons[i].setMap(googleMap);
+    // Shows the municipality polygons
+    function showMunicipalityPolygons() {
+      for(i=0;i<municipalityPolygons.length;i++) {
+          municipalityPolygons[i].setMap(googleMap);
       }
     }
 
-      function hideProvinciePolygons() {
-        for(i=0;i<provinciePolygons.length;i++) {
-            provinciePolygons[i].setMap(null);
+    // Hides the province polygons
+      function hideProvincePolygons() {
+        for(i=0;i<provincePolygons.length;i++) {
+            provincePolygons[i].setMap(null);
         }
       }
 
-      function hideGemeentePolygons() {
-        for(i=0;i<gemeentePolygons.length;i++) {
-          gemeentePolygons[i].setMap(null);
+      // Hides the municipality polygons
+      function hideMunicipalityPolygons() {
+        for(i=0;i<municipalityPolygons.length;i++) {
+          municipalityPolygons[i].setMap(null);
         }
       }
 
-      function showMarkers(gemeente, provincie) {
+      // Shows the markers of a specified municipality
+      function showMarkers(municipality, province) {
         if(googleMap.getZoom() > 10) {
-          if(gemeente == null) {
-            var index = -1;
-            for(i = 0;i<provincieMarkers.length;i++) {
-              if(provincie == provincieMarkers[i].name) {
-                index = i;
-              }
-            }
-            if(index>-1) {
-              var provincie = provincieMarkers[index];
-              for(i = 0;i< provincie.markers.length;i++) {
-                var marker = provincie.markers[i];
-                marker.setMap(googleMap);
-              }
+          var index = -1;
+          for(i = 0;i<municipalityMarkers.length;i++) {
+            if(municipality == municipalityMarkers[i].name) {
+              index = i;
             }
           }
-          else {
-            var index = -1;
-            for(i = 0;i<gemeenteMarkers.length;i++) {
-              if(gemeente == gemeenteMarkers[i].name) {
-                index = i;
-              }
-            }
-            if(index>-1) {
-              var gemeente = gemeenteMarkers[index];
-              for(i = 0;i< gemeente.markers.length;i++) {
-                var marker = gemeente.markers[i];
-                marker.setMap(googleMap);
-              }
+          if(index>-1) {
+            var municipality = municipalityMarkers[index];
+            for(i = 0;i< municipality.markers.length;i++) {
+              var marker = municipality.markers[i];
+              marker.setMap(googleMap);
             }
           }
         }
       }
 
+      // Hides the markers a specified municipality
       function hideMarkers() {
         if(currentlySelectedPolygon != null) {
-          if(currentlySelectedPolygon.gemeente == null) {
-            var index = -1;
-            for(i = 0;i<provincieMarkers.length;i++) {
-              if(currentlySelectedPolygon.provincie == provincieMarkers[i].name) {
-                index = i;
-              }
-            }
-            if(index>-1) {
-              var provincie = provincieMarkers[index];
-              for(i = 0;i< provincie.markers.length;i++) {
-                var marker = provincie.markers[i];
-                marker.setMap(null);
-              }
+          var index = -1;
+          for(i = 0;i<municipalityMarkers.length;i++) {
+            if(currentlySelectedPolygon.municipality == municipalityMarkers[i].name) {
+              index = i;
             }
           }
-          else {
-            var index = -1;
-            for(i = 0;i<gemeenteMarkers.length;i++) {
-              if(currentlySelectedPolygon.gemeente == gemeenteMarkers[i].name) {
-                index = i;
-              }
-            }
-            if(index>-1) {
-              var gemeente = gemeenteMarkers[index];
-              for(i = 0;i< gemeente.markers.length;i++) {
-                var marker = gemeente.markers[i];
-                marker.setMap(null);
-              }
+          if(index>-1) {
+            var municipality = municipalityMarkers[index];
+            for(i = 0;i< municipality.markers.length;i++) {
+              var marker = municipality.markers[i];
+              marker.setMap(null);
             }
           }
         }
       }
 
+      // Switches the markers on or off
       function switchVisibilityMarkers() {
         if(markersVisible) {
           hideMarkers();
           markersVisible = false;
         }
         else {
-          showMarkers(currentlySelectedPolygon.gemeente, currentlySelectedPolygon.provincie);
+          showMarkers(currentlySelectedPolygon.municipality, currentlySelectedPolygon.province);
           markersVisible = true;
         }
       }
@@ -726,12 +701,12 @@ table {
           <div class="col-md-2">
             <div class="btn-group">
               <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
-              Provincies
+              Provinces
               <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" id="menuTime" role="menu" aria-labelledby="dropdownMenu2">
-                  <li role = "presentation"><a role="menuitem" tabindex="-1">Municipalities</a></li>
                   <li role = "presentation"><a role="menuitem" tabindex="-1">Provinces</a></li>
+                  <li role = "presentation"><a role="menuitem" tabindex="-1">Municipalities</a></li>
                   <li role = "presentation"><a role="menuitem" tabindex="-1">None</a></li>
               </ul>
             </div>
