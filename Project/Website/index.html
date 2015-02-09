@@ -384,7 +384,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         infoWindow.setContent(
           "<div id='infoWindow'>" +
           "<br>" +
-          "<table style='widht:100%'>" +
+          "<table>" +
             "<tr>" +
               "<td>" + "Provincie: " + "</td>" + 
               "<td>" + polygon.provincie + "</td>" + 
@@ -392,12 +392,12 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             "</tr>" + 
             "<tr>" +
               "<td>" + "Population: " + "</td>" + 
-              "<td>" + polygon.population + "</td>" +
-              "<td>" + polygon.Population_Rank+ "</td>" +
+              "<td>" + polygon.Population + "</td>" +
+              "<td>" + polygon.Population_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
               "<td>" + "Population per km2: " + "</td>" + 
-              "<td>" + polygon.PopulationPerKm2 + "<td>" +
+              "<td>" + polygon.PopulationPerKm2 + "</td>" +
               "<td>" + polygon.Population_Km2_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
@@ -406,32 +406,32 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               "<td>" + polygon.NumStops_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Number of routes: " + "</td>" + 
               "<td>" + polygon.NumberOfRoutes + "</td>" +
               "<td>" + polygon.NumRoutes_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Number of area in km2: " + "</td>" + 
               "<td>" + polygon.AreaInKm2 + "</td>" +
               "<td>" + polygon.Area_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Stops per Km2: " + "</td>" + 
               "<td>" + polygon.StopsPerKm2 + "</td>" +
               "<td>" + polygon.Stops_Km2_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Routes per Km2: " + "</td>" + 
               "<td>" + polygon.RoutesPerKm2 + "</td>" +
               "<td>" + polygon.Routes_Km2_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Stops per inhabitant: " + "</td>" + 
               "<td>" + polygon.StopsPerInhabitant + "</td>" +
               "<td>" + polygon.Stops_Pop_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Routes per inhabitant: " + "</td>" + 
               "<td>" + polygon.RoutesPerInhabitant + "</td>" +
               "<td>" + polygon.Routes_Pop_Rank + "</td>" +
             "</tr>" +
@@ -443,7 +443,7 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
         infoWindow.setContent(
           "<div id='infoWindow'>" +
           "<br>" +
-          "<table style='widht:100%'>" +
+          "<table style='width:100%'>" +
             "<tr>" +
               "<td>" + "Provincie: " + "</td>" + 
               "<td>" + polygon.provincie + "</td>" + 
@@ -456,12 +456,12 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
             "</tr>" + 
             "<tr>" +
               "<td>" + "Population: " + "</td>" + 
-              "<td>" + polygon.population + "</td>" +
+              "<td>" + polygon.Population + "</td>" +
               "<td>" + polygon.Population_Rank+ "</td>" +
             "</tr>" +
             "<tr>" +
               "<td>" + "Population per km2: " + "</td>" + 
-              "<td>" + polygon.PopulationPerKm2 + "<td>" +
+              "<td>" + polygon.PopulationPerKm2 + "</td>" +
               "<td>" + polygon.Population_Km2_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
@@ -470,32 +470,32 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
               "<td>" + polygon.NumStops_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Number of routes: " + "</td>" + 
               "<td>" + polygon.NumberOfRoutes + "</td>" +
               "<td>" + polygon.NumRoutes_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Area in Km2: " + "</td>" + 
               "<td>" + polygon.AreaInKm2 + "</td>" +
               "<td>" + polygon.Area_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Stops per Km2: " + "</td>" + 
               "<td>" + polygon.StopsPerKm2 + "</td>" +
               "<td>" + polygon.Stops_Km2_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Routes per Km2: " + "</td>" + 
               "<td>" + polygon.RoutesPerKm2 + "</td>" +
               "<td>" + polygon.Routes_Km2_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Stops per inhabitant: " + "</td>" + 
               "<td>" + polygon.StopsPerInhabitant + "</td>" +
               "<td>" + polygon.Stops_Pop_Rank + "</td>" +
             "</tr>" +
             "<tr>" +
-              "<td>" + "Number of stops: " + "</td>" + 
+              "<td>" + "Routes per ifnhabitant: " + "</td>" + 
               "<td>" + polygon.RoutesPerInhabitant + "</td>" +
               "<td>" + polygon.Routes_Pop_Rank + "</td>" +
             "</tr>" +
@@ -663,11 +663,15 @@ https://developers.google.com/maps/documentation/javascript/examples/layer-kml
  line-height: 20px;
 }
 #infoWindow{
-  width:330px;
-  height:175px;
+  width:400px;
+  height: 230px;
 }
 td {
-  padding-right: 5px;
+  padding-right: 10px;
+}
+
+table {
+  width:100%;
 }
 </style>
 
