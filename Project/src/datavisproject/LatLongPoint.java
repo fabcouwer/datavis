@@ -2,6 +2,8 @@ package datavisproject;
 
 import java.util.ArrayList;
 
+// LatLongPoint class
+// Represents a (latitude,longitude) point
 public class LatLongPoint {
 
 	private float latitude;
@@ -16,38 +18,6 @@ public class LatLongPoint {
 		this.id = id;
 		this.province = "";
 		this.setMunicipality("");
-	}
-
-	public float getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(float latitude) {
-		this.latitude = latitude;
-	}
-
-	public float getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(float longitude) {
-		this.longitude = longitude;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getProvince() {
-		return province;
-	}
-
-	public void setProvince(String province) {
-		this.province = province;
 	}
 
 	// Returns true if this point is within the boundaries of the given polygon.
@@ -113,6 +83,40 @@ public class LatLongPoint {
 		float blue = (ax != px) ? ((py - ay) / (px - ax)) : Float.MAX_VALUE;
 		return (blue >= red);
 
+	}
+
+	// Getters and setters
+
+	public float getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(float latitude) {
+		this.latitude = latitude;
+	}
+
+	public float getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(float longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
 	}
 
 	public String getMunicipality() {

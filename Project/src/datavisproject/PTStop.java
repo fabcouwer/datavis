@@ -3,7 +3,7 @@ package datavisproject;
 import java.util.ArrayList;
 
 //PTStop: Represents a public transportation stop
-//We only consider bus stops (for now)
+//We only consider bus stops
 public class PTStop {
 
 	private String id;
@@ -39,11 +39,12 @@ public class PTStop {
 		}
 	}
 
+	// Getters and setters
+
 	public ArrayList<String> getRoutes() {
 		return routes;
 	}
 
-	// Getters and setters
 	public String getId() {
 		return id;
 	}
@@ -92,22 +93,6 @@ public class PTStop {
 		this.longitude = longitude;
 	}
 
-	public String toString() {
-		String ts = "<PTStop: Name = " + name + " | Town = " + town
-				+ " | Municipality = " + municipality + " | Province = "
-				+ province + " | Lat/Long = " + latitude + " / " + longitude
-				+ " | Routes : " + routesToString() + ">";
-		return ts;
-	}
-
-	public String routesToString() {
-		String toReturn = "";
-		for (String route : routes) {
-			toReturn += route + "/";
-		}
-		return (toReturn.substring(0, toReturn.length() - 1));
-	}
-
 	public String getMunicipality() {
 		return municipality;
 	}
@@ -124,11 +109,31 @@ public class PTStop {
 		this.operator = operator;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof PTStop))
 			return false;
 		PTStop that = (PTStop) other;
 		return this.id.equals(that.getId());
+	}
+
+	// Returns a String representation of this object
+	@Override
+	public String toString() {
+		String ts = "<PTStop: Name = " + name + " | Town = " + town
+				+ " | Municipality = " + municipality + " | Province = "
+				+ province + " | Lat/Long = " + latitude + " / " + longitude
+				+ " | Routes : " + routesToString() + ">";
+		return ts;
+	}
+
+	// Returns a String representation of the routes arraylist
+	public String routesToString() {
+		String toReturn = "";
+		for (String route : routes) {
+			toReturn += route + "/";
+		}
+		return (toReturn.substring(0, toReturn.length() - 1));
 	}
 
 }

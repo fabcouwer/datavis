@@ -12,6 +12,7 @@ import java.util.Scanner;
 //Processes the datasets from OpenOV and our own province/municipality dataset into a format usable in our visualization
 public class DataSetProcessor {
 
+	// Local files to use
 	static String prefix = "C:\\Users\\F\\Dropbox\\Studie\\Data Visualization\\Project\\datasets\\";
 
 	private static String stopsFile = prefix + "stops.csv";
@@ -105,18 +106,6 @@ public class DataSetProcessor {
 			System.out.println("Reading stops - done.");
 			System.out.println("Number of lines omitted: " + count + ".");
 
-			// Output points as (id, lat, long) to check for province
-			// Write longlats to a file
-			/*
-			 * FileWriter fileWriter = new FileWriter(
-			 * "C:\\Users\\F\\Downloads\\longlat.txt"); BufferedWriter
-			 * bufferedWriter = new BufferedWriter(fileWriter);
-			 * bufferedWriter.write("id,latitude,longitude");
-			 * bufferedWriter.newLine(); for (String s : longlats) {
-			 * bufferedWriter.write(s); bufferedWriter.newLine(); }
-			 * bufferedWriter.flush(); bufferedWriter.close();
-			 */
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -177,6 +166,7 @@ public class DataSetProcessor {
 
 	}
 
+	// Output individual bus stops to a file (unused in final implementation)
 	private static void outputStopsToFile() {
 		try {
 			File file = new File(outputFile);
@@ -257,8 +247,9 @@ public class DataSetProcessor {
 
 	}
 
+	// Reads the population file and adds its information to municipality
+	// objects
 	public static void readPopulationFile() {
-		// Read the population file
 		try {
 			BufferedReader br;
 			String line = "";
@@ -284,6 +275,8 @@ public class DataSetProcessor {
 		System.out.println("Added population data to municipalities.");
 	}
 
+	// Outputs a file with statistics about each municipality collected from
+	// the various datasets
 	public static void outputMunicipalitiesToFile() {
 		try {
 			File file = new File(outputFile);

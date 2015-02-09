@@ -14,15 +14,14 @@ import java.util.Map.Entry;
 // Based on whether or not they are inside the province polygons
 public class ProvinceProcessor {
 
-	static String prefix = "C:\\Users\\F\\";
+	// Local files used in processing
+	static String prefix = "C:\\Users\\F\\Dropbox\\Studie\\Data Visualization\\Project\\datasets\\";
 
-	public static String municipalitiesFile = prefix
-			+ "Dropbox\\Studie\\Data Visualization\\Project\\datasets\\gemeenten_nieuw.csv";
-	public static String latlongFile = prefix
-			+ "Dropbox\\Studie\\Data Visualization\\Project\\datasets\\latlong.txt";
-	public static String outputFile = prefix
-			+ "Dropbox\\Studie\\Data Visualization\\Project\\datasets\\output.txt";
+	public static String municipalitiesFile = prefix + "gemeenten_nieuw.csv";
+	public static String latlongFile = prefix + "latlong.txt";
+	public static String outputFile = prefix + "output.txt";
 
+	// Containers for the objects read from input
 	public static HashMap<String, ArrayList<LatLongPolygon>> provinces;
 	public static HashMap<String, ArrayList<LatLongPolygon>> municipalities;
 	public static ArrayList<LatLongPoint> points;
@@ -35,6 +34,8 @@ public class ProvinceProcessor {
 		outputToFile();
 	}
 
+	// Given a fileName, reads that file into a hashmap of polygons (used for
+	// municipality borders)
 	private static HashMap<String, ArrayList<LatLongPolygon>> readFileIntoPolygons(
 			String fileName) {
 		String line;
@@ -84,7 +85,7 @@ public class ProvinceProcessor {
 		return currentPolygon;
 	}
 
-	// Read the points file into a list of latlongpoints
+	// Reads the points file into a list of latlongpoints
 	public static void readPoints() {
 
 		BufferedReader br;
@@ -117,8 +118,7 @@ public class ProvinceProcessor {
 	}
 
 	private static void assignMunicipalities() {
-		// For every point, check if it is in polygons corresponding to each
-		// province
+		// For every point, check if it is a municipality's polygons
 		int count = 0;
 		for (LatLongPoint point : points) {
 			for (Entry<String, ArrayList<LatLongPolygon>> entry : municipalities
@@ -141,17 +141,19 @@ public class ProvinceProcessor {
 				count++;
 			}
 		}
+		// Output number of points that were not assigned (<0,5%)
 		System.out
 				.println("Municipalities and Provinces assigned. Could not assign "
 						+ count + " points.");
-
 	}
 
+	// Output all points for which we found the province and
+	// municipality
 	public static void outputToFile() {
 		try {
 			File file = new File(outputFile);
 
-			// if file doesnt exists, then create it
+			// if file doesn't exist, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -161,8 +163,6 @@ public class ProvinceProcessor {
 
 			bw.write("id,latitude,longitude,municipality,province\n");
 			String line;
-			// Output all points for which we found the province and
-			// municipality
 			for (LatLongPoint point : points) {
 				if (!point.getMunicipality().equals("")) {
 					line = point.getId() + "," + point.getLatitude() + ","
@@ -179,5 +179,4 @@ public class ProvinceProcessor {
 			e.printStackTrace();
 		}
 	}
-
 }

@@ -2,6 +2,8 @@ package datavisproject;
 
 import java.util.ArrayList;
 
+// Municipality class
+// Represents a municipality in the Netherlands
 public class Municipality {
 
 	private String name;
@@ -21,7 +23,7 @@ public class Municipality {
 		this.busRoutes = new ArrayList<String>();
 	}
 
-	//Add a busstop and its routes to this municipality
+	// Add a bus stop and its routes to this municipality
 	public void addStop(PTStop busStop) {
 		busStops.add(busStop);
 		for (String route : busStop.getRoutes()) {
@@ -42,6 +44,8 @@ public class Municipality {
 		Municipality that = (Municipality) other;
 		return this.name.equals(that.getName());
 	}
+
+	// Getters and setters
 
 	public String getName() {
 		return name;

@@ -2,6 +2,8 @@ package datavisproject;
 
 import java.util.ArrayList;
 
+// LatLongPolygon class
+// Represents a polygon made up of LatLongPoint objects
 public class LatLongPolygon {
 
 	private String id;
@@ -11,6 +13,8 @@ public class LatLongPolygon {
 		this.id = id;
 		this.points = new ArrayList<LatLongPoint>();
 	}
+
+	// Getters and setters
 
 	public String getId() {
 		return id;
@@ -23,7 +27,6 @@ public class LatLongPolygon {
 	public ArrayList<LatLongPoint> getPoints() {
 		return points;
 	}
-
 
 	public void add(LatLongPoint p) {
 		this.points.add(p);
